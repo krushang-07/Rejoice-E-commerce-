@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/Slices/userSlice"; // Adjust path based on your file structure
 import { Link, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -9,34 +11,41 @@ const Login = () => {
 
   const { loading, error } = useSelector((state) => state.user); // Access loading and error from Redux
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email is required"),
+      password: Yup.string().required("Password is required"),
+    }),
+    onSubmit: async (values) => {
+      const formData = { ...values };
+      try {
+        const response = await dispatch(loginUser(formData)).unwrap();
+        // Storing user data in localStorage
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("role", response.role);
+        localStorage.setItem("userId", response.userId);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const formData = { email, password };
-
-    try {
-      const response = await dispatch(loginUser(formData)).unwrap();
-      // Storing user data in localStorage
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("role", response.role);
-      localStorage.setItem("userId", response.userId);
-
-      if (response.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/user");
+        if (response.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/user");
+        }
+      } catch (err) {
+        console.error("Login failed:", err);
       }
-    } catch (err) {
-      console.error("Login failed:", err);
-    }
-  };
+    },
+  });
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <form
-        onSubmit={handleLogin}
+        onSubmit={formik.handleSubmit}
         className="bg-white p-6 rounded shadow-lg w-96"
       >
         <h2 className="text-2xl mb-4">Login</h2>
@@ -48,11 +57,15 @@ const Login = () => {
           <input
             type="email"
             id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="w-full p-2 border border-gray-300 rounded"
             required
           />
+          {formik.touched.email && formik.errors.email && (
+            <p className="text-red-500 text-sm">{formik.errors.email}</p>
+          )}
         </div>
         <div className="mb-4">
           <label className="block mb-2" htmlFor="password">
@@ -61,11 +74,15 @@ const Login = () => {
           <input
             type="password"
             id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="w-full p-2 border border-gray-300 rounded"
             required
           />
+          {formik.touched.password && formik.errors.password && (
+            <p className="text-red-500 text-sm">{formik.errors.password}</p>
+          )}
         </div>
         <button
           type="submit"

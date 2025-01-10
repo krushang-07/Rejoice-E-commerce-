@@ -43,7 +43,7 @@ const Navbar = () => {
               to="/products"
               className="text-lg hover:text-yellow-400 transition duration-300"
             >
-              Shop
+              Collections
             </Link>
             <Link
               to="/about"

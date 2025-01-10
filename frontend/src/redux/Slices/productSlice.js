@@ -6,12 +6,33 @@ const API = axios.create({
   baseURL: "http://localhost:5000/api", // Replace with your backend base URL
 });
 
-// Async thunk to fetch all products
+// Async thunk to fetch all products for normal all product fetch
+// export const fetchProducts = createAsyncThunk(
+//   "products/fetchAll",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await API.get("/products"); // Endpoint to fetch products
+//       return response.data; // Return the products data from the response
+//     } catch (err) {
+//       return rejectWithValue(
+//         err.response?.data?.message || "Failed to fetch products"
+//       );
+//     }
+//   }
+// );
+
+//based on query
 export const fetchProducts = createAsyncThunk(
   "products/fetchAll",
-  async (_, { rejectWithValue }) => {
+  async ({ page, limit }, { rejectWithValue }) => {
     try {
-      const response = await API.get("/products"); // Endpoint to fetch products
+      // Construct the query parameters dynamically
+      const response = await API.get("/products", {
+        params: {
+          page, // Page number (e.g., 1)
+          limit, // Items per page (e.g., 10)
+        },
+      });
       return response.data; // Return the products data from the response
     } catch (err) {
       return rejectWithValue(

@@ -1,20 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Base API configuration
 const API = axios.create({
-  baseURL: "http://localhost:5000/api", // Replace with your backend base URL
+  baseURL: "http://localhost:5000/api",
 });
 
-// Async actions using createAsyncThunk
+// Async actions for cart
 export const fetchCart = createAsyncThunk(
   "cart/fetchCart",
   async ({ userId }, { rejectWithValue }) => {
     try {
-      const response = await API.post("/cart", { userId }); // Correct endpoint for fetching cart
+      const response = await API.post("/cart", { userId });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue(
+        error.response?.data?.message || "Error fetching cart"
+      );
     }
   }
 );
@@ -27,36 +28,42 @@ export const addToCartAction = createAsyncThunk(
         userId,
         productId,
         quantity,
-      }); // Correct endpoint for adding to cart
+      });
+      console.log(response.data.quantity);
+      console.log(response.data.items);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue(
+        error.response?.data?.message || "Error adding to cart"
+      );
     }
   }
 );
 
 export const removeFromCartAction = createAsyncThunk(
   "cart/removeFromCart",
-  async (productId, { rejectWithValue }) => {
+  async ({ userId, productId }, { rejectWithValue }) => {
     try {
-      await API.delete("/cart/remove", {
-        data: { productId },
-      }); // Correct endpoint for removing from cart
-      return productId; // Return the product ID for removal
+      await API.delete("/cart/remove", { data: { userId, productId } });
+      return productId; // Return product ID to remove it from cart
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue(
+        error.response?.data?.message || "Error removing item"
+      );
     }
   }
 );
 
 export const updateCartAction = createAsyncThunk(
   "cart/updateCart",
-  async ({ productId, quantity }, { rejectWithValue }) => {
+  async ({ userId, productId, quantity }, { rejectWithValue }) => {
     try {
-      const response = await API.patch("/cart/update", { productId, quantity }); // Correct endpoint for updating cart
-      return response.data;
+      const response = await API.patch("/cart/update", { productId, quantity });
+      return response.data; // Return updated cart
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue(
+        error.response?.data?.message || "Error updating cart"
+      );
     }
   }
 );
@@ -80,11 +87,10 @@ const cartSlice = createSlice({
     builder
       .addCase(fetchCart.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchCart.fulfilled, (state, action) => {
         state.loading = false;
-        state.cartItems = action.payload;
+        state.cartItems = action.payload.items; // Handle correct structure
       })
       .addCase(fetchCart.rejected, (state, action) => {
         state.loading = false;
@@ -95,7 +101,7 @@ const cartSlice = createSlice({
       })
       .addCase(addToCartAction.fulfilled, (state, action) => {
         state.loading = false;
-        state.cartItems.push(action.payload);
+        state.cartItems = action.payload.items;
       })
       .addCase(addToCartAction.rejected, (state, action) => {
         state.loading = false;
@@ -119,12 +125,7 @@ const cartSlice = createSlice({
       })
       .addCase(updateCartAction.fulfilled, (state, action) => {
         state.loading = false;
-        const updatedItemIndex = state.cartItems.findIndex(
-          (item) => item._id === action.payload._id
-        );
-        if (updatedItemIndex !== -1) {
-          state.cartItems[updatedItemIndex] = action.payload;
-        }
+        state.cartItems = action.payload.items; // Update items
       })
       .addCase(updateCartAction.rejected, (state, action) => {
         state.loading = false;
