@@ -6,13 +6,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 const ProductList = () => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.products);
-  const [columns, setColumns] = useState(4); // Default to 3 columns
+  const [columns, setColumns] = useState(4);
   const [currentPageProducts, setCurrentPageProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false); // Track the state of the category list visibility
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(
     new URLSearchParams(location.search).get("type") || ""
   );
@@ -23,7 +23,6 @@ const ProductList = () => {
   const currentPage = parseInt(queryParams.get("page")) || 1;
   const limit = parseInt(queryParams.get("limit")) || 10;
 
-  // Fetch products with pagination and category filter
   useEffect(() => {
     dispatch(
       fetchProducts({ page: currentPage, limit, type: selectedCategory })
@@ -38,7 +37,6 @@ const ProductList = () => {
       });
   }, [dispatch, currentPage, limit, selectedCategory]);
 
-  // Handle category selection
   const handleCategorySelect = (category) => {
     const queryParams = new URLSearchParams(location.search);
     queryParams.set("type", category);
@@ -48,13 +46,11 @@ const ProductList = () => {
     navigate({ search: encodedUrl });
   };
 
-  // Generate page numbers for pagination
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i);
   }
 
-  // Handle page click for pagination
   const paginate = (pageNumber) => {
     const queryParams = new URLSearchParams(location.search);
     queryParams.set("page", pageNumber);
@@ -133,7 +129,20 @@ const ProductList = () => {
           style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
           className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >
-          {loading && <p>Loading products...</p>}
+          {loading && (
+            <>
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </>
+          )}
           {error && <p className="text-red-500">{error}</p>}
           {currentPageProducts.length > 0 &&
             currentPageProducts.map((product) => (
@@ -187,6 +196,22 @@ const ProductList = () => {
               ))}
             </ul>
           </nav>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Skeleton Card for the loading state
+const SkeletonCard = () => {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-md animate-blink overflow-hidden flex flex-col p-4">
+      <div className="h-64 bg-gray-300 rounded-t-lg animate-pulse"></div>
+      <div className="flex-grow mt-4">
+        <div className="h-6 bg-gray-300 rounded-md mb-4 animate-pulse"></div>
+        <div className="flex items-center justify-between">
+          <div className="h-6 w-24 bg-gray-300 rounded-md animate-pulse"></div>
+          <div className="h-6 w-20 bg-gray-300 rounded-md animate-pulse"></div>
         </div>
       </div>
     </div>
