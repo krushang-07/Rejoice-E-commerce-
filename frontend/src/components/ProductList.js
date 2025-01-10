@@ -111,17 +111,17 @@ const ProductList = () => {
           currentPageProducts.map((product) => (
             <div
               key={product._id}
-              className="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105"
+              className="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 flex flex-col"
             >
-              <div className="relative">
+              <div className="relative flex-shrink-0">
                 <img
                   src={product.image}
                   alt={product.title}
                   className="w-full h-64 object-cover rounded-t-lg"
                 />
               </div>
-              <div className="p-5">
-                <h5 className="text-lg font-semibold text-gray-800 mb-2">
+              <div className="p-4 flex flex-col flex-grow">
+                <h5 className="text-lg font-semibold text-gray-800 mb-2 truncate">
                   {product.title}
                 </h5>
                 <p className="text-sm text-gray-600 line-clamp-2 mb-4">
@@ -143,6 +143,8 @@ const ProductList = () => {
                 >
                   View Details
                 </Link>
+              </div>
+              <div className="p-4 flex-shrink-0">
                 <button
                   onClick={() => handleAddToCart(product._id)}
                   className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
