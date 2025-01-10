@@ -34,6 +34,7 @@ const Cart = () => {
 
   const handleUpdateCart = (productId, quantity) => {
     const userId = localStorage.getItem("userId");
+
     if (userId) {
       if (quantity > 0) {
         dispatch(updateCartAction({ userId, productId, quantity }));
@@ -88,7 +89,7 @@ const Cart = () => {
                     onClick={() =>
                       handleUpdateCart(item.productId._id, item.quantity - 1)
                     }
-                    className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-md hover:bg-blue-600 transition"
+                    className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-600 transition"
                   >
                     -
                   </button>
@@ -97,7 +98,7 @@ const Cart = () => {
                     onClick={() =>
                       handleUpdateCart(item.productId._id, item.quantity + 1)
                     }
-                    className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-md hover:bg-blue-600 transition"
+                    className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-600 transition"
                   >
                     +
                   </button>
@@ -131,7 +132,7 @@ const Cart = () => {
             </span>
           </div>
           <div className="mt-6 flex justify-center">
-            <button className="px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-all">
+            <button className="px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-600 transition-all">
               Proceed to Checkout
             </button>
           </div>

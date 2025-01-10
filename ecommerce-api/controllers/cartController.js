@@ -88,6 +88,8 @@ exports.addToCart = async (req, res) => {
 exports.updateCart = async (req, res) => {
   try {
     const { userId, productId, quantity } = req.body;
+    // console.log(productId);
+    // console.log(quantity);
 
     if (
       !mongoose.Types.ObjectId.isValid(userId) ||
@@ -118,6 +120,7 @@ exports.updateCart = async (req, res) => {
 exports.removeItemFromCart = async (req, res) => {
   try {
     const { userId, productId } = req.body;
+    // console.log(req.body);
 
     if (
       !mongoose.Types.ObjectId.isValid(userId) ||

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById } from "../redux/Slices/productSlice";
 import { addToCartAction } from "../redux/Slices/cartSlice";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa"; // Import arrow icon from react-icons
 
 const ProductItem = () => {
   const { id } = useParams();
@@ -98,7 +99,7 @@ const ProductItem = () => {
             </button>
             <button
               onClick={handleAddToCart}
-              className="px-6 py-3 bg-blue-600 text-white rounded-md text-lg font-semibold hover:bg-blue-700 transition duration-200"
+              className="px-6 py-3 bg-black text-white rounded-md text-lg font-semibold hover:bg-gray-700 transition duration-200"
             >
               Add to Cart
             </button>
@@ -109,7 +110,7 @@ const ProductItem = () => {
             <button
               className={`text-lg font-semibold ${
                 activeTab === "description"
-                  ? "text-blue-600 border-b-2 border-blue-600"
+                  ? "text-black border-b-2 border-gray-600"
                   : "text-gray-600"
               }`}
               onClick={() => setActiveTab("description")}
@@ -119,7 +120,7 @@ const ProductItem = () => {
             <button
               className={`text-lg font-semibold ${
                 activeTab === "reviews"
-                  ? "text-blue-600 border-b-2 border-blue-600"
+                  ? "text-black border-b-2 border-gray-600"
                   : "text-gray-600"
               }`}
               onClick={() => setActiveTab("reviews")}
@@ -186,6 +187,17 @@ const ProductItem = () => {
               </div>
             </div>
           )}
+
+          {/* Continue Shopping Button */}
+          <div className="mt-8">
+            <Link
+              to="/products"
+              className="flex items-center text-lg font-semibold text-black hover:text-gray-700"
+            >
+              <FaArrowLeft className="mr-2" />
+              Continue Shopping
+            </Link>
+          </div>
         </div>
       </div>
     </div>

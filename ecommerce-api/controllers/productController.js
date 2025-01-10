@@ -12,25 +12,33 @@ const Product = require("../models/productSchema");
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 5 } = req.query; // Extract page and limit from query params
+    // Destructure and provide default values if not present
+    const { page = 1, limit = 5, type } = req.query;
 
-    // Convert to numbers (optional: you can add validation here)
+    // Convert to numbers
     const pageNumber = parseInt(page, 10);
     const pageLimit = parseInt(limit, 10);
 
-    // Find the products with pagination
-    const products = await Product.find()
-      .skip((pageNumber - 1) * pageLimit) // Skip previous pages
-      .limit(pageLimit); // Limit results per page
+    // Build the query based on the type (category)
+    const query = type ? { category: type } : {}; // Filter by category if 'type' exists
 
-    // Get the total count of products for pagination calculation
-    const totalProducts = await Product.countDocuments();
+    // Fetch products with pagination and category filter
+    const products = await Product.find(query)
+      .skip((pageNumber - 1) * pageLimit) // Skip products for previous pages
+      .limit(pageLimit); // Limit products per page
 
+    // Get total count of products for pagination
+    const totalProducts = await Product.countDocuments(query);
+
+    // Send the response with paginated data
     res.status(200).json({
       products,
       totalProducts,
       currentPage: pageNumber,
       totalPages: Math.ceil(totalProducts / pageLimit),
+      message: type
+        ? `Products fetched for category: ${type}`
+        : "All products fetched.",
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

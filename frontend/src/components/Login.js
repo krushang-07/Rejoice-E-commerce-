@@ -34,7 +34,7 @@ const Login = () => {
         if (response.role === "admin") {
           navigate("/admin");
         } else {
-          navigate("/user");
+          navigate("/");
         }
       } catch (err) {
         console.error("Login failed:", err);
@@ -87,13 +87,13 @@ const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          className="w-full bg-black text-white p-2 rounded hover:bg-gray-600"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
         <p className="text-center mt-4">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-blue-600 hover:underline">
+          <Link to="/signup" className="text-black hover:underline">
             Signup
           </Link>
         </p>

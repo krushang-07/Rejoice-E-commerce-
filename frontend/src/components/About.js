@@ -226,7 +226,7 @@ const AboutUs = () => {
       </section>
 
       {/* Call to Action Section */}
-      <section className="cta py-20 bg-blue-600 text-white text-center">
+      <section className="cta py-20 bg-black text-white text-center">
         <motion.h2
           variants={fadeIn}
           initial="hidden"
@@ -244,7 +244,7 @@ const AboutUs = () => {
           Don’t miss out on our latest products, exclusive offers, and more!
           Subscribe to our newsletter and be part of the PickNShop experience.
         </motion.p>
-        <button className="bg-white text-blue-600 px-8 py-4 rounded-full text-lg hover:bg-gray-100 transition duration-500 ease-in-out">
+        <button className="bg-white text-black px-8 py-4 rounded-full text-lg hover:bg-gray-100 transition duration-500 ease-in-out">
           Subscribe Now
         </button>
       </section>

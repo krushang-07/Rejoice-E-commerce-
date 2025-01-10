@@ -8,7 +8,7 @@ const app = express();
 const productRoutes = require("./routes/productRoutes.js");
 const cartRoutes = require("./routes/cartRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
-
+app.use(express.urlencoded({ extended: true })); // For parsing URL encoded query params
 app.use(bodyParser.json());
 // Enable CORS
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));

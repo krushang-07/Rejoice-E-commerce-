@@ -29,8 +29,8 @@ export const addToCartAction = createAsyncThunk(
         productId,
         quantity,
       });
-      console.log(response.data.quantity);
-      console.log(response.data.items);
+      // console.log(response.data.quantity);
+      // console.log(response.data.items);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -58,7 +58,11 @@ export const updateCartAction = createAsyncThunk(
   "cart/updateCart",
   async ({ userId, productId, quantity }, { rejectWithValue }) => {
     try {
-      const response = await API.patch("/cart/update", { productId, quantity });
+      const response = await API.patch("/cart/update", {
+        userId,
+        productId,
+        quantity,
+      });
       return response.data; // Return updated cart
     } catch (error) {
       return rejectWithValue(

@@ -119,14 +119,14 @@ const Signup = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition"
+            className="w-full bg-black text-white p-2 rounded-lg hover:bg-gray-700 transition"
           >
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
         <p className="text-center mt-4">
           Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 hover:underline">
+          <Link to="/login" className="text-black hover:underline">
             Login
           </Link>
         </p>
