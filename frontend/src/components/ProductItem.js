@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById } from "../redux/Slices/productSlice";
 import { addToCartAction } from "../redux/Slices/cartSlice";
 import { useParams, Link } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa"; // Import arrow icon from react-icons
+import { FaArrowLeft } from "react-icons/fa";
+import { toast, ToastContainer } from "react-toastify"; // Import toast from react-toastify
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS for Toastify
 
 const ProductItem = () => {
   const { id } = useParams();
@@ -28,7 +30,7 @@ const ProductItem = () => {
     dispatch(addToCartAction({ userId, productId: id, quantity }))
       .unwrap()
       .then(() => {
-        alert("Product added to cart!");
+        toast.success("Product added to cart!");
       })
       .catch((error) => {
         console.error("Error adding product to cart:", error);
@@ -36,7 +38,13 @@ const ProductItem = () => {
       });
   };
 
-  if (loading) return <div className="text-center py-8">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-16 h-16 border-4 border-t-4 border-gray-500 border-solid rounded-full animate-spin"></div>
+      </div>
+    );
+  }
   if (error)
     return <div className="text-red-500 text-center py-8">{error}</div>;
 
@@ -200,6 +208,7 @@ const ProductItem = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
