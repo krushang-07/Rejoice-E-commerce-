@@ -1,16 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  const [cartItemCount, setCartItemCount] = useState(0);
-
-  useEffect(() => {
-    // Get cart items from localStorage and update the badge count
-    const cartItems = localStorage.getItem("cart");
-    setCartItemCount(cartItems); // Assuming cart is stored as an array
-  }, []);
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -32,7 +24,7 @@ const Navbar = () => {
               />
             </Link>
           </div>
-          {/* Navigation Links */}
+
           <div className="flex items-center space-x-8">
             <Link
               to="/"
@@ -53,7 +45,6 @@ const Navbar = () => {
               About
             </Link>
 
-            {/* Auth Links (Login, Signup, Logout) */}
             {!localStorage.getItem("role") ? (
               <>
                 <Link
@@ -78,18 +69,12 @@ const Navbar = () => {
               </button>
             )}
 
-            {/* Cart Icon with Badge */}
             <div className="relative">
               <Link
                 to="/cart"
                 className="text-lg hover:text-gray-400 transition duration-300"
               >
                 <FaShoppingCart className="w-8 h-8 text-black mx-auto " />
-                {cartItemCount > 0 && (
-                  <span className="absolute top-0 right-0 block w-5 h-5 text-xs text-white bg-red-500 rounded-full flex items-center justify-center">
-                    {cartItemCount}
-                  </span>
-                )}
               </Link>
             </div>
           </div>

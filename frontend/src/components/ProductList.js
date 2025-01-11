@@ -202,7 +202,6 @@ const ProductList = () => {
   );
 };
 
-// Skeleton Card for the loading state
 const SkeletonCard = () => {
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-md animate-blink overflow-hidden flex flex-col p-4">

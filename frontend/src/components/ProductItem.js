@@ -4,8 +4,8 @@ import { fetchProductById } from "../redux/Slices/productSlice";
 import { addToCartAction } from "../redux/Slices/cartSlice";
 import { useParams, Link } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
-import { toast, ToastContainer } from "react-toastify"; // Import toast from react-toastify
-import "react-toastify/dist/ReactToastify.css"; // Import the CSS for Toastify
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProductItem = () => {
   const { id } = useParams();
@@ -52,7 +52,6 @@ const ProductItem = () => {
     return null;
   }
 
-  // Dummy Review Data
   const dummyReviews = [
     { username: "John Doe", rating: 4, comment: "Great product!" },
     { username: "Jane Smith", rating: 5, comment: "Absolutely love it!" },
@@ -77,7 +76,6 @@ const ProductItem = () => {
           </div>
         </div>
 
-        {/* Product Details Section */}
         <div className="space-y-8">
           <h1 className="text-4xl font-extrabold text-gray-900">
             {product.title}
@@ -90,7 +88,6 @@ const ProductItem = () => {
             <span className="text-gray-600">({product.ratings} ratings)</span>
           </div>
 
-          {/* Quantity and Add to Cart Section */}
           <div className="flex items-center space-x-6">
             <button
               onClick={() => setQuantity(Math.max(quantity - 1, 1))}
@@ -113,7 +110,6 @@ const ProductItem = () => {
             </button>
           </div>
 
-          {/* Tab Navigation */}
           <div className="flex space-x-6 border-b-2 pb-4">
             <button
               className={`text-lg font-semibold ${
@@ -137,7 +133,6 @@ const ProductItem = () => {
             </button>
           </div>
 
-          {/* Tab Content */}
           {activeTab === "description" && (
             <div>
               <p className="text-lg text-gray-700">{product.description}</p>
@@ -196,7 +191,6 @@ const ProductItem = () => {
             </div>
           )}
 
-          {/* Continue Shopping Button */}
           <div className="mt-8">
             <Link
               to="/products"

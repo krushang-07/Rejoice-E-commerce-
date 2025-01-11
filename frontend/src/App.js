@@ -12,6 +12,7 @@ import CartPage from "./pages/CartPage.js";
 import ProductPage from "./pages/ProductPage.js";
 import AboutPage from "./pages/AboutPage.js";
 import ProductItemPage from "./pages/ProductItemPage.js";
+import CheckOutPage from "./pages/CheckOutPage.js";
 
 axios.defaults.baseURL = "http://localhost:5000/";
 
@@ -29,6 +30,7 @@ function App() {
         <Route path="/products" element={<ProductPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/product/:id" element={<ProductItemPage />} />
+        <Route path="/checkout" element={<CheckOutPage />} />
       </Routes>
       <Footer />
     </Router>
