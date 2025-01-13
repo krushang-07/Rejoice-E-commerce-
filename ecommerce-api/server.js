@@ -40,72 +40,47 @@ app.use("/api/cart", cartRoutes);
 // Payment Intent Route
 app.post("/create-payment-intent", async (req, res) => {
   const { userId } = req.body;
+  console.log("User ID:", userId);
 
+  // Validate userId
   if (!userId) {
     return res.status(400).json({ message: "userId is required" });
   }
-
   try {
+    //Retrieve the cart for the given user
     const cart = await Cart.findOne({ userId });
-    if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ message: "Cart is empty" });
-    }
-
+    // Return the payment link URL to the client
     const cartItems = cart.items;
-    let totalAmount = 0;
-    const products = await Promise.all(
+    let products = await Promise.all(
       cartItems.map(async (item) => {
+        console.log(item.productId);
         const product = await Product.findById(item.productId);
-        if (!product) {
-          throw new Error(`Product not found for ID: ${item.productId}`);
-        }
-
-        const productPrice = product.price || 0;
-        const quantity = item.quantity || 0;
-
-        totalAmount += productPrice * quantity * 100; // Convert to cents
-
-        const stripeProduct = await stripe.products.create({
-          name: product.title,
-          images: [product.image],
-        });
-
+        console.log(product);
         const price = await stripe.prices.create({
-          unit_amount: productPrice * 100, // Convert to cents
+          unit_amount: product.price * 100,
           currency: "usd",
-          product: stripeProduct.id,
+          product_data: {
+            name: product.title,
+            // images: [product.image], // Add image URL from product
+          },
         });
-
         return {
           price: price.id,
-          quantity: quantity,
+          quantity: item.quantity,
         };
       })
     );
-
-    // // Generate unique Order ID
-    // const orderId = `ORD-${Date.now()}`;
-
-    // // Save the order in the database with status 'pending'
-    // const order = new Order({
-    //   orderId,
-    //   userId,
-    //   items: cartItems,
-    //   totalAmount,
-    //   paymentMethod: "card", // Update as per your choice (Card/UPI)
-    //   status: "pending",
-    // });
-    // await order.save();
-
-    // Create a payment link
     const paymentLink = await stripe.paymentLinks.create({
       line_items: products,
-      // metadata: { orderId }, // Include orderId in metadata
-      shipping_address_collection: { allowed_countries: ["US", "IN"] },
-      billing_address_collection: "required",
+      metadata: {
+        userId, // Include userId in metadata
+      },
+      shipping_address_collection: {
+        allowed_countries: ["US", "IN"], // Specify allowed countries for delivery
+      },
+      billing_address_collection: "required", // Require billing address
     });
-
-    res.status(200).json({ url: paymentLink.url }); // Return payment link and orderId
+    res.status(200).json({ url: paymentLink.url });
   } catch (error) {
     console.error("Error creating payment intent:", error);
     res.status(500).json({ error: error.message });
