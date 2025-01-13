@@ -18,6 +18,7 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.3",
+    "openai": "^4.78.1",
     "Router": "^2.1.0",
     "stripe": "^17.5.0"
   },

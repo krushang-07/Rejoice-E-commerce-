@@ -13,6 +13,7 @@ import ProductPage from "./pages/ProductPage.js";
 import AboutPage from "./pages/AboutPage.js";
 import ProductItemPage from "./pages/ProductItemPage.js";
 import CheckOutPage from "./pages/CheckOutPage.js";
+import Chatbot from "./components/Chatbot.js";
 
 axios.defaults.baseURL = "http://localhost:5000/";
 
@@ -31,6 +32,7 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/product/:id" element={<ProductItemPage />} />
         <Route path="/checkout" element={<CheckOutPage />} />
+        <Route path="/chat-bot" element={<Chatbot />} />
       </Routes>
       <Footer />
     </Router>

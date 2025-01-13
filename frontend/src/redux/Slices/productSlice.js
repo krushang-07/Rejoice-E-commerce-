@@ -24,7 +24,7 @@ const API = axios.create({
 //based on query
 export const fetchProducts = createAsyncThunk(
   "products/fetchAll",
-  async ({ page, limit, type }, { rejectWithValue }) => {
+  async ({ search, page, limit, type }, { rejectWithValue }) => {
     try {
       // Construct the query parameters dynamically
       const response = await API.get("/products", {
@@ -32,6 +32,7 @@ export const fetchProducts = createAsyncThunk(
           page, // Page number (e.g., 1)
           limit, // Items per page (e.g., 10)
           type,
+          search,
         },
       });
       return response.data; // Return the products data from the response

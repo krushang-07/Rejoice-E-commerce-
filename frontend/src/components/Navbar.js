@@ -44,7 +44,6 @@ const Navbar = () => {
             >
               About
             </Link>
-
             {!localStorage.getItem("role") ? (
               <>
                 <Link

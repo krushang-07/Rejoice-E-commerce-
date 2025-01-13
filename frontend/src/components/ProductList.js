@@ -9,6 +9,7 @@ const ProductList = () => {
   const [columns, setColumns] = useState(4);
   const [currentPageProducts, setCurrentPageProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [searchQuery, setSearchQuery] = useState(""); // Step 2: Track search query
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -21,11 +22,16 @@ const ProductList = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const currentPage = parseInt(queryParams.get("page")) || 1;
-  const limit = parseInt(queryParams.get("limit")) || 10;
+  const limit = parseInt(queryParams.get("limit")) || 25;
 
   useEffect(() => {
     dispatch(
-      fetchProducts({ page: currentPage, limit, type: selectedCategory })
+      fetchProducts({
+        page: currentPage,
+        limit,
+        type: selectedCategory || "",
+        search: searchQuery, // Step 3: Pass search query to fetchProducts
+      })
     )
       .unwrap()
       .then((data) => {
@@ -35,7 +41,7 @@ const ProductList = () => {
       .catch((error) => {
         console.error("Error fetching products:", error);
       });
-  }, [dispatch, currentPage, limit, selectedCategory]);
+  }, [dispatch, currentPage, limit, selectedCategory, searchQuery]); // Step 3: Add searchQuery as dependency
 
   const handleCategorySelect = (category) => {
     const queryParams = new URLSearchParams(location.search);
@@ -44,6 +50,10 @@ const ProductList = () => {
     const encodedUrl = queryParams.toString();
     setSelectedCategory(category);
     navigate({ search: encodedUrl });
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value); // Step 2: Update search query
   };
 
   const pageNumbers = [];
@@ -93,6 +103,13 @@ const ProductList = () => {
 
       <div className="flex-grow">
         <div className="mb-6 flex justify-end space-x-4">
+          <input
+            type="text"
+            value={searchQuery} // Step 2: Bind input to searchQuery
+            onChange={handleSearchChange}
+            className="px-4 py-2 border rounded-md w-1/3"
+            placeholder="Search products..."
+          />
           <button
             onClick={() => setColumns(2)}
             className={`px-6 py-2 flex items-center space-x-2 rounded-md text-sm font-medium transition-all duration-200 ${

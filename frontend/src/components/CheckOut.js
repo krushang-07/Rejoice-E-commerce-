@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import axios
-import { useNavigate } from "react-router-dom"; // Updated to useNavigate for redirection
 
 const CheckoutPage = () => {
-  const [paymentLink, setPaymentLink] = useState(null);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPaymentLink = async () => {
       const userID = localStorage.getItem("userId");
-      console.log(userID);
+      console.log("User ID:", userID);
       if (!userID) {
         console.error("User ID is not available in localStorage.");
         setError("User ID is required.");
@@ -31,9 +28,8 @@ const CheckoutPage = () => {
         console.log("Response Data:", response.data);
 
         if (response.data.url) {
-          setPaymentLink(response.data.url); // Set the payment link
-          console.log(paymentLink);
-          navigate(`$/{paymentLink}`); // Redirect to payment link
+          // Redirect directly to the payment link
+          window.location.href = response.data.url;
         } else {
           throw new Error("Failed to fetch payment link");
         }
@@ -52,7 +48,7 @@ const CheckoutPage = () => {
 
       {error && <p className="text-red-500">{error}</p>}
 
-      {!paymentLink && (
+      {!error && (
         <div className="flex justify-center items-center">
           <div
             className="border-t-4 border-blue-600 w-16 h-16 rounded-full animate-spin"

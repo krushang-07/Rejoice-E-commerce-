@@ -41,6 +41,12 @@ const HomePage = () => {
           >
             Shop Now
           </Link>
+          <Link
+            to="/chat-bot"
+            className="bg-white hover:bg-black hover:text-white text-black  py-3 px-8 rounded-full text-lg transition transform hover:scale-105 duration-300"
+          >
+            Chat bot
+          </Link>
         </motion.div>
       </motion.div>
 
