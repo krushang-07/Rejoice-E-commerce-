@@ -17,6 +17,9 @@ const ProductItem = () => {
   useEffect(() => {
     dispatch(fetchProductById(id));
   }, [dispatch, id]);
+  useEffect(() => {
+    localStorage.setItem("totalCartQuantity", quantity);
+  });
 
   const handleAddToCart = () => {
     const userId = localStorage.getItem("userId");
@@ -64,14 +67,23 @@ const ProductItem = () => {
 
   return (
     <div className="container mx-auto px-6 py-12">
+      <div className="mt-8">
+        <Link
+          to="/products"
+          className="flex items-center text-lg font-semibold text-black hover:text-gray-800"
+        >
+          <FaArrowLeft className="mr-2" />
+          Continue Shopping
+        </Link>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Product Image Section */}
         <div className="flex justify-center">
-          <div className="w-full max-w-[500px] h-[500px] bg-gray-100 overflow-hidden rounded-lg shadow-lg">
+          <div className="w-full max-w-[500px] h-[500px] bg-gray-100 overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <img
               src={product.image}
               alt={product.title}
-              className="w-full h-full object-contain transition-transform duration-300 ease-in-out hover:scale-105"
+              className="w-full h-full object-contain transition-transform duration-300 ease-in-out hover:scale-110"
             />
           </div>
         </div>
@@ -80,25 +92,28 @@ const ProductItem = () => {
           <h1 className="text-4xl font-extrabold text-gray-900">
             {product.title}
           </h1>
-          <p className="text-xl font-semibold text-green-600">
-            ${product.price}
+          <p className="text-2xl font-bold text-green-600">
+            ${product.price.toFixed(2)}
+          </p>
+          <p className="text-lg font-medium text-red-600">
+            {product.discount}% off
           </p>
           <div className="flex items-center space-x-2">
-            <span className="text-yellow-500">⭐⭐⭐⭐⭐</span>
+            <span className="text-yellow-500 text-lg">⭐⭐⭐⭐⭐</span>
             <span className="text-gray-600">({product.ratings} ratings)</span>
           </div>
 
           <div className="flex items-center space-x-6">
             <button
               onClick={() => setQuantity(Math.max(quantity - 1, 1))}
-              className="px-4 py-2 bg-gray-300 rounded-md text-xl hover:bg-gray-400 transition duration-200"
+              className="px-4 py-2 bg-gray-200 rounded-md text-xl hover:bg-gray-300 transition duration-200"
             >
               -
             </button>
             <span className="text-2xl font-semibold">{quantity}</span>
             <button
               onClick={() => setQuantity(quantity + 1)}
-              className="px-4 py-2 bg-gray-300 rounded-md text-xl hover:bg-gray-400 transition duration-200"
+              className="px-4 py-2 bg-gray-200 rounded-md text-xl hover:bg-gray-300 transition duration-200"
             >
               +
             </button>
@@ -112,9 +127,9 @@ const ProductItem = () => {
 
           <div className="flex space-x-6 border-b-2 pb-4">
             <button
-              className={`text-lg font-semibold ${
+              className={`text-lg font-semibold pb-2 ${
                 activeTab === "description"
-                  ? "text-black border-b-2 border-gray-600"
+                  ? "text-black border-b-2 border-blue-600"
                   : "text-gray-600"
               }`}
               onClick={() => setActiveTab("description")}
@@ -122,9 +137,9 @@ const ProductItem = () => {
               Description
             </button>
             <button
-              className={`text-lg font-semibold ${
+              className={`text-lg font-semibold pb-2 ${
                 activeTab === "reviews"
-                  ? "text-black border-b-2 border-gray-600"
+                  ? "text-black border-b-2 border-blue-600"
                   : "text-gray-600"
               }`}
               onClick={() => setActiveTab("reviews")}
@@ -134,7 +149,7 @@ const ProductItem = () => {
           </div>
 
           {activeTab === "description" && (
-            <div>
+            <div className="space-y-4">
               <p className="text-lg text-gray-700">{product.description}</p>
               <div className="space-y-4 mt-6">
                 <p>
@@ -154,12 +169,6 @@ const ProductItem = () => {
                     Category:
                   </strong>{" "}
                   {product.category}
-                </p>
-                <p>
-                  <strong className="font-semibold text-gray-800">
-                    Discount:
-                  </strong>{" "}
-                  {product.discount}% off
                 </p>
               </div>
             </div>
@@ -190,16 +199,6 @@ const ProductItem = () => {
               </div>
             </div>
           )}
-
-          <div className="mt-8">
-            <Link
-              to="/products"
-              className="flex items-center text-lg font-semibold text-black hover:text-gray-700"
-            >
-              <FaArrowLeft className="mr-2" />
-              Continue Shopping
-            </Link>
-          </div>
         </div>
       </div>
       <ToastContainer />

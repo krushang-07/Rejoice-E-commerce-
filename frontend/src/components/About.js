@@ -226,7 +226,7 @@ const AboutUs = () => {
       </section>
 
       {/* Call to Action Section */}
-      <section className="cta py-20 bg-black text-white text-center">
+      <section className="cta py-20 bg-gray-200 text-black text-center">
         <motion.h2
           variants={fadeIn}
           initial="hidden"

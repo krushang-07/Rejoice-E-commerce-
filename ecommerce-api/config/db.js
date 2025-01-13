@@ -11,7 +11,9 @@ const connectDB = async () => {
     console.log("MongoDB connected");
 
     // Fetch products from external API
-    const response = await axios.get("https://fakestoreapi.in/api/products");
+    const response = await axios.get(
+      "https://fakestoreapi.in/api/products?limit=150"
+    );
     const externalProducts = response.data.products;
 
     // Map external data to match your schema

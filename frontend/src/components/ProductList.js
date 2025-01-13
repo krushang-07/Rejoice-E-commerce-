@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../redux/Slices/productSlice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaThLarge, FaTh, FaThList } from "react-icons/fa"; // Import specific icons
 
 const ProductList = () => {
   const dispatch = useDispatch();
@@ -9,11 +10,10 @@ const ProductList = () => {
   const [columns, setColumns] = useState(4);
   const [currentPageProducts, setCurrentPageProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [searchQuery, setSearchQuery] = useState(""); // Step 2: Track search query
+  const [searchQuery, setSearchQuery] = useState(""); // Track search query
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(
     new URLSearchParams(location.search).get("type") || ""
   );
@@ -22,7 +22,7 @@ const ProductList = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const currentPage = parseInt(queryParams.get("page")) || 1;
-  const limit = parseInt(queryParams.get("limit")) || 25;
+  const limit = parseInt(queryParams.get("limit")) || 30;
 
   useEffect(() => {
     dispatch(
@@ -30,7 +30,7 @@ const ProductList = () => {
         page: currentPage,
         limit,
         type: selectedCategory || "",
-        search: searchQuery, // Step 3: Pass search query to fetchProducts
+        search: searchQuery, // Pass search query to fetchProducts
       })
     )
       .unwrap()
@@ -41,7 +41,7 @@ const ProductList = () => {
       .catch((error) => {
         console.error("Error fetching products:", error);
       });
-  }, [dispatch, currentPage, limit, selectedCategory, searchQuery]); // Step 3: Add searchQuery as dependency
+  }, [dispatch, currentPage, limit, selectedCategory, searchQuery]); // Add searchQuery as dependency
 
   const handleCategorySelect = (category) => {
     const queryParams = new URLSearchParams(location.search);
@@ -53,7 +53,7 @@ const ProductList = () => {
   };
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); // Step 2: Update search query
+    setSearchQuery(e.target.value); // Update search query
   };
 
   const pageNumbers = [];
@@ -68,78 +68,69 @@ const ProductList = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 flex">
-      <aside className="w-1/4 pr-6">
-        <h2 className="text-xl font-semibold mb-4">Categories</h2>
-        <button
-          onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-          className="px-4 py-2 text-sm font-medium bg-gray-200 rounded-md w-full mb-4"
-        >
-          {isCategoryOpen ? "Hide Categories" : "Show All Categories"}
-        </button>
-        <div
-          className={`transition-all duration-300 ease-in-out ${
-            isCategoryOpen ? "max-h-screen" : "max-h-0 overflow-hidden"
-          }`}
-        >
-          <ul className="space-y-2">
-            {categories.map((category) => (
-              <li key={category}>
-                <button
-                  onClick={() => handleCategorySelect(category)}
-                  className={`block w-full text-left px-4 py-2 rounded-md transition-all duration-200 ${
-                    selectedCategory === category
-                      ? "bg-black text-white"
-                      : "bg-gray-200 text-gray-800 hover:bg-blue-100"
-                  }`}
-                >
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
-                </button>
-              </li>
-            ))}
-          </ul>
+    <div className="container mx-auto p-10 flex">
+      <aside className="w-64 fixed top-24 left-20 bg-gray-100 text-black shadow-md">
+        <h2 className="text-xl font-semibold mb-4 p-4">Categories</h2>
+        <ul className="space-y-2 p-4">
+          {categories.map((category) => (
+            <li key={category}>
+              <button
+                onClick={() => handleCategorySelect(category)}
+                className={`block w-full text-left px-4 py-2 rounded-md transition-all duration-200 ${
+                  selectedCategory === category
+                    ? "bg-gray-400 text-white"
+                    : " text-black  hover:bg-gray-200"
+                }`}
+              >
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </button>
+            </li>
+          ))}
+        </ul>
+        <h3 className="text-xl font-semibold mt-6 mb-4 p-4">Columns</h3>
+        <div className="space-y-2 p-4">
+          <button
+            onClick={() => setColumns(2)}
+            className={`w-full text-left px-4 py-2 rounded-md transition-all duration-200 ${
+              columns === 2
+                ? "bg-gray-400 text-white"
+                : " text-black  hover:bg-gray-200"
+            }`}
+          >
+            <FaThLarge />
+          </button>
+          <button
+            onClick={() => setColumns(3)}
+            className={`w-full text-left px-4 py-2 rounded-md transition-all duration-200 ${
+              columns === 3
+                ? "bg-gray-400 text-white"
+                : " text-black  hover:bg-gray-200"
+            }`}
+          >
+            <FaTh />
+          </button>
+          <button
+            onClick={() => setColumns(4)}
+            className={`w-full text-left px-4 py-2 rounded-md transition-all duration-200 ${
+              columns === 4
+                ? "bg-gray-400 text-white"
+                : " text-black  hover:bg-gray-200"
+            }`}
+          >
+            <FaThList />
+          </button>
         </div>
       </aside>
 
-      <div className="flex-grow">
+      <div className="flex-grow pl-64">
         <div className="mb-6 flex justify-end space-x-4">
           <input
             type="text"
-            value={searchQuery} // Step 2: Bind input to searchQuery
+            value={searchQuery} // Bind input to searchQuery
             onChange={handleSearchChange}
             className="px-4 py-2 border rounded-md w-1/3"
             placeholder="Search products..."
           />
-          <button
-            onClick={() => setColumns(2)}
-            className={`px-6 py-2 flex items-center space-x-2 rounded-md text-sm font-medium transition-all duration-200 ${
-              columns === 2
-                ? "bg-black text-white"
-                : "bg-gray-200 text-gray-800 hover:bg-blue-100"
-            }`}
-          >
-            <span>2 Columns</span>
-          </button>
-          <button
-            onClick={() => setColumns(3)}
-            className={`px-6 py-2 flex items-center space-x-2 rounded-md text-sm font-medium transition-all duration-200 ${
-              columns === 3
-                ? "bg-black text-white"
-                : "bg-gray-200 text-gray-800 hover:bg-blue-100"
-            }`}
-          >
-            <span>3 Columns</span>
-          </button>
-          <button
-            onClick={() => setColumns(4)}
-            className={`px-6 py-2 flex items-center space-x-2 rounded-md text-sm font-medium transition-all duration-200 ${
-              columns === 4
-                ? "bg-black text-white"
-                : "bg-gray-200 text-gray-800 hover:bg-blue-100"
-            }`}
-          >
-            <span>4 Columns</span>
-          </button>
         </div>
 
         <div

@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const [cartQuantity, setCartQuantity] = useState(0);
+
+  useEffect(() => {
+    // Fetch the cart quantity from localStorage or an API
+    const cartItems =
+      JSON.parse(localStorage.getItem("totalCartQuantity")) || [];
+    console.log(cartItems);
+    setCartQuantity(cartItems);
+  }, []);
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    // Remove the entire user object from localStorage
     localStorage.removeItem("role");
+    localStorage.removeItem("token");
     localStorage.removeItem("userId");
-    window.location.href = "/";
+    window.location.href = "/"; // Redirect to home page after logout
   };
 
   return (
@@ -74,6 +84,11 @@ const Navbar = () => {
                 className="text-lg hover:text-gray-400 transition duration-300"
               >
                 <FaShoppingCart className="w-8 h-8 text-black mx-auto " />
+                {cartQuantity >= 0 && (
+                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full transform translate-x-2 -translate-y-2">
+                    {cartQuantity}
+                  </span>
+                )}
               </Link>
             </div>
           </div>

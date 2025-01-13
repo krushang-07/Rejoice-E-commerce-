@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../redux/Slices/userSlice"; // Adjust the path based on your file structure
+import { registerUser } from "../redux/Slices/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -98,16 +98,6 @@ const Signup = () => {
           {formik.touched.address && formik.errors.address && (
             <p className="text-red-500 text-sm">{formik.errors.address}</p>
           )}
-
-          <select
-            name="role"
-            value={formik.values.role}
-            onChange={formik.handleChange}
-            className="w-full p-2 mb-4 border rounded-lg"
-          >
-            <option value="customer">Customer</option>
-            <option value="admin">Admin</option>
-          </select>
 
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
           {success && (

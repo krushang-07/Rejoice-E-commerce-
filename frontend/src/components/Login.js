@@ -1,9 +1,11 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../redux/Slices/userSlice"; // Adjust path based on your file structure
+import { loginUser } from "../redux/Slices/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -31,10 +33,27 @@ const Login = () => {
         localStorage.setItem("role", response.role);
         localStorage.setItem("userId", response.userId);
 
+        // Show a toaster based on user role
         if (response.role === "admin") {
-          navigate("/admin");
+          toast.success("Admin login successful", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          navigate("/admin"); // Redirect to admin dashboard
         } else {
-          navigate("/");
+          toast.success("Customer login successful", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          navigate("/"); // Redirect to homepage
         }
       } catch (err) {
         console.error("Login failed:", err);
@@ -98,6 +117,7 @@ const Login = () => {
           </Link>
         </p>
       </form>
+      {/* <ToastContainer /> */}
     </div>
   );
 };

@@ -1,13 +1,39 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../redux/Slices/productSlice";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion"; // Import Framer Motion
 import { FaShippingFast, FaShoppingCart, FaHeadset } from "react-icons/fa"; // Icons from React Icons
+import Faq from "../components/Faq";
 
 const HomePage = () => {
-  // Scroll Animation on page load
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.products);
+  const [categoryProducts, setCategoryProducts] = useState({
+    mobile: null,
+    tv: null,
+    audio: null,
+    gaming: null,
+  });
+
+  const categories = ["mobile", "tv", "audio", "gaming"];
+
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top on load
-  }, []);
+    // Fetch one product for each category
+    categories.forEach((category) => {
+      dispatch(fetchProducts({ page: 1, limit: 1, type: category }))
+        .unwrap()
+        .then((data) => {
+          setCategoryProducts((prev) => ({
+            ...prev,
+            [category]: data.products[0], // Store only one product per category
+          }));
+        })
+        .catch((error) => {
+          console.error(`Error fetching ${category} products:`, error);
+        });
+    });
+  }, [categories]);
 
   return (
     <div className="overflow-hidden">
@@ -24,7 +50,6 @@ const HomePage = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        {/* <div className="absolute inset-0 bg-black opacity-50 z-0"></div> */}
         <motion.div
           className="z-10 p-8"
           initial={{ y: -100 }}
@@ -37,34 +62,13 @@ const HomePage = () => {
           </p>
           <Link
             to="/products"
-            className="bg-white hover:bg-black hover:text-white text-black  py-3 px-8 rounded-full text-lg transition transform hover:scale-105 duration-300"
+            className="bg-white hover:bg-black hover:text-white text-black py-3 px-8 rounded-full text-lg transition transform hover:scale-105 duration-300"
           >
             Shop Now
-          </Link>
-          <Link
-            to="/chat-bot"
-            className="bg-white hover:bg-black hover:text-white text-black  py-3 px-8 rounded-full text-lg transition transform hover:scale-105 duration-300"
-          >
-            Chat bot
           </Link>
         </motion.div>
       </motion.div>
 
-      {/* News Shutter Section */}
-      <motion.div
-        className="bg-gray-200 py-4"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 1 }}
-      >
-        <div className="container mx-auto text-center">
-          <marquee className="text-xl text-red-600 font-semibold">
-            Breaking News: Big Sale Coming Soon! Stay Tuned!
-          </marquee>
-        </div>
-      </motion.div>
-
-      {/* Features Section */}
       <section className="py-12 bg-white">
         <div className="container mx-auto text-center">
           <motion.h2
@@ -137,38 +141,52 @@ const HomePage = () => {
             New Arrivals
           </motion.h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {/* Product Card */}
-            {Array.from({ length: 4 }).map((_, index) => (
-              <motion.div
-                key={index}
-                className="bg-white shadow-xl rounded-lg overflow-hidden transition transform hover:scale-105 duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1 }}
-              >
-                <img
-                  src={`https://via.placeholder.com/300x300?text=Product+${
-                    index + 1
-                  }`}
-                  alt={`Product ${index + 1}`}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="text-xl font-semibold">
-                    Product Title {index + 1}
-                  </h3>
-                  <p className="mt-2 text-lg">$99.99</p>
-                  <Link
-                    to="/product-detail"
-                    className="mt-4 inline-block bg-black text-white py-2 px-6 rounded-lg hover:bg-gray-700 transition"
+            {/* Display one product from each category */}
+            {loading && (
+              <>
+                <div className="bg-white shadow-xl rounded-lg overflow-hidden animate-pulse"></div>
+                <div className="bg-white shadow-xl rounded-lg overflow-hidden animate-pulse"></div>
+                <div className="bg-white shadow-xl rounded-lg overflow-hidden animate-pulse"></div>
+                <div className="bg-white shadow-xl rounded-lg overflow-hidden animate-pulse"></div>
+              </>
+            )}
+            {error && <p className="text-red-500">{error}</p>}
+            {categories.map((category) => {
+              const product = categoryProducts[category];
+              if (product) {
+                return (
+                  <motion.div
+                    key={product._id}
+                    className="bg-white shadow-xl rounded-lg overflow-hidden transition transform hover:scale-105 duration-300"
+                    whileHover={{ scale: 1 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
                   >
-                    View Details
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
+                    <img
+                      src={product.image}
+                      alt={product.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h3 className="text-xl font-semibold">{product.title}</h3>
+                      <p className="mt-2 text-lg">${product.price}</p>
+                      <Link
+                        to={`/product/${product._id}`}
+                        className="mt-4 inline-block bg-black text-white py-2 px-6 rounded-lg hover:bg-gray-700 transition"
+                      >
+                        View Details
+                      </Link>
+                    </div>
+                  </motion.div>
+                );
+              }
+              return null;
+            })}
+          </div>
+          <div className="mt-16">
+            <Faq />
           </div>
         </div>
       </section>
