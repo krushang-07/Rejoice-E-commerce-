@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../redux/Slices/productSlice";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion"; // Import Framer Motion
-import { FaShippingFast, FaShoppingCart, FaHeadset } from "react-icons/fa"; // Icons from React Icons
+import { motion } from "framer-motion";
+import { FaShippingFast, FaShoppingCart, FaHeadset } from "react-icons/fa";
 import Faq from "../components/Faq";
 import Loader from "../utils/Loader";
 
@@ -28,6 +28,7 @@ const HomePage = () => {
 
   return (
     <div className="overflow-hidden">
+      {/* Hero Section */}
       <motion.div
         style={{
           backgroundImage: "url('benner.jpg')",
@@ -59,6 +60,43 @@ const HomePage = () => {
         </motion.div>
       </motion.div>
 
+      {/* Top-Selling Brands Section */}
+      <section className="py-12 bg-gray-100">
+        <div className="container mx-auto text-center">
+          <motion.h2
+            className="text-4xl font-bold mb-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          >
+            Top-Selling Brands
+          </motion.h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 items-center">
+            {[
+              { name: "Apple", src: "/apple.png" },
+              { name: "Samsung", src: "/samsung.png" },
+              { name: "Sony", src: "/sony.png" },
+              { name: "Mi", src: "/mi.png" },
+              { name: "LogiTech", src: "/logitech.png" },
+            ].map((brand, index) => (
+              <motion.div
+                key={index}
+                className="p-4 bg-white shadow-md rounded-lg hover:shadow-lg transition transform hover:scale-105"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+              >
+                <img
+                  src={brand.src}
+                  alt={brand.name}
+                  className="w-full h-20 object-contain mx-auto"
+                />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Why Shop With Us Section */}
       <section className="py-12 bg-white">
         <div className="container mx-auto text-center">
@@ -82,7 +120,7 @@ const HomePage = () => {
               <FaShippingFast className="w-12 h-12 text-black mx-auto mb-4" />
               <h3 className="text-xl font-semibold">Free Shipping</h3>
               <p className="mt-2 text-gray-600">
-                Enjoy free shipping on all orders over $50.
+                Enjoy free shipping on all orders over $100.
               </p>
             </motion.div>
             <motion.div
@@ -99,7 +137,6 @@ const HomePage = () => {
                 Browse products and complete your purchase in minutes.
               </p>
             </motion.div>
-
             <motion.div
               className="p-6 hover:shadow-xl transform hover:scale-105 transition duration-300"
               whileHover={{ scale: 1.05 }}
@@ -130,7 +167,6 @@ const HomePage = () => {
             New Arrivals
           </motion.h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {/* Display fetched products */}
             {loading && <Loader />}
             {error && <p className="text-red-500">{error}</p>}
             {fetchedProducts?.products?.map((product) => (

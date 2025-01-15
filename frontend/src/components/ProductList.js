@@ -24,7 +24,14 @@ const ProductList = () => {
     new URLSearchParams(location.search).get("type") || ""
   );
 
-  const categories = ["mobile", "tv", "audio", "gaming"];
+  const categories = [
+    "mobile",
+    "tv",
+    "audio",
+    "gaming",
+    "laptop",
+    "appliances",
+  ];
 
   const queryParams = new URLSearchParams(location.search);
   const currentPage = parseInt(queryParams.get("page")) || 1;
