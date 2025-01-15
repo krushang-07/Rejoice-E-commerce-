@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   fetchCart,
   removeFromCartAction,
@@ -8,19 +10,19 @@ import {
   resetCartState,
 } from "../redux/Slices/cartSlice";
 import axios from "axios";
+import Loader from "../utils/Loader";
 
 const Cart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { cartItems, loading, error } = useSelector((state) => state.cart);
-  console.log(cartItems);
+  const { cartItems, loading } = useSelector((state) => state.cart);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (userId) {
       dispatch(fetchCart({ userId }));
     } else {
-      alert("You need to log in first!");
+      toast.error("You need to log in first!");
     }
 
     return () => {
@@ -28,9 +30,7 @@ const Cart = () => {
     };
   }, [dispatch]);
 
-  // Update total cart quantity in localStorage
   useEffect(() => {
-    // Check if cartItems has valid data
     if (cartItems && cartItems.length > 0) {
       const totalQuantity = cartItems.reduce(
         (total, item) => total + item.quantity,
@@ -38,7 +38,6 @@ const Cart = () => {
       );
       localStorage.setItem("totalCartQuantity", totalQuantity);
     }
-    // Do not overwrite if cartItems is undefined or empty
   }, [cartItems]);
 
   const handleRemoveFromCart = (productId) => {
@@ -48,21 +47,24 @@ const Cart = () => {
         .unwrap()
         .then(() => {
           dispatch(fetchCart({ userId }));
+          toast.success("Item removed from cart successfully!");
         })
         .catch((error) => {
-          console.error("Error removing product from cart:", error);
+          toast.error(error);
         });
     }
   };
 
   const handleUpdateCart = (productId, quantity) => {
     const userId = localStorage.getItem("userId");
-
     if (userId) {
       if (quantity > 0) {
-        dispatch(updateCartAction({ userId, productId, quantity }));
+        dispatch(updateCartAction({ userId, productId, quantity }))
+          .unwrap()
+          .then(() => toast.success("Cart updated successfully!"))
+          .catch(() => toast.error("Failed to update the cart."));
       } else {
-        handleRemoveFromCart(productId); // Remove item if quantity is 0
+        handleRemoveFromCart(productId);
       }
     }
   };
@@ -75,7 +77,6 @@ const Cart = () => {
     );
 
     try {
-      // Call backend to create Stripe PaymentIntent
       const response = await axios.post(
         "http://localhost:5000/create-payment-intent",
         {
@@ -84,17 +85,13 @@ const Cart = () => {
           totalPrice,
         }
       );
-
       const { clientSecret } = response.data;
-
-      // Navigate to payment page with clientSecret
       navigate("/checkout", { state: { clientSecret, cartItems, totalPrice } });
+      toast.success("Redirecting to checkout...");
     } catch (error) {
-      console.error("Error during checkout:", error);
+      toast.error("Error during checkout. Please try again.");
     }
   };
-
-  if (error) return <div>Error: {error}</div>;
 
   const items = cartItems || [];
   const totalPrice = items
@@ -103,12 +100,11 @@ const Cart = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <ToastContainer />
       <h2 className="text-3xl font-semibold text-center mb-8">Your Cart</h2>
 
       {loading ? (
-        <div className="flex justify-center items-center min-h-screen">
-          <div className="border-t-4 border-black border-solid w-16 h-16 rounded-full animate-spin"></div>
-        </div>
+        <Loader />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left Side: Cart Items */}

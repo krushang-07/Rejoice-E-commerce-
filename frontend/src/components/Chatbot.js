@@ -13,7 +13,7 @@ const Chatbot = () => {
       text: userInput,
     };
     setMessages((prevMessages) => [...prevMessages, newMessage]);
-    setUserInput(""); // Clear user input field
+    setUserInput("");
 
     try {
       // Send user message to the backend for processing

@@ -6,6 +6,7 @@ import { useParams, Link } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../utils/Loader";
 
 const ProductItem = () => {
   const { id } = useParams();
@@ -36,17 +37,12 @@ const ProductItem = () => {
         toast.success("Product added to cart!");
       })
       .catch((error) => {
-        console.error("Error adding product to cart:", error);
-        alert("Failed to add product to cart. Please try again.");
+        toast.error(error);
       });
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="w-16 h-16 border-4 border-t-4 border-gray-500 border-solid rounded-full animate-spin"></div>
-      </div>
-    );
+    return <Loader />;
   }
   if (error)
     return <div className="text-red-500 text-center py-8">{error}</div>;

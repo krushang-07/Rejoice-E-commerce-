@@ -40,7 +40,6 @@ app.use("/api/cart", cartRoutes);
 // Payment Intent Route
 app.post("/create-payment-intent", async (req, res) => {
   const { userId } = req.body;
-  console.log("User ID:", userId);
 
   // Validate userId
   if (!userId) {
@@ -53,9 +52,9 @@ app.post("/create-payment-intent", async (req, res) => {
     const cartItems = cart.items;
     let products = await Promise.all(
       cartItems.map(async (item) => {
-        console.log(item.productId);
+        // console.log(item.productId);
         const product = await Product.findById(item.productId);
-        console.log(product);
+        // console.log(product);
         const price = await stripe.prices.create({
           unit_amount: product.price * 100,
           currency: "usd",

@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../utils/Loader";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const Login = () => {
         // Show a toaster based on user role
         if (response.role === "admin") {
           toast.success("Admin login successful", {
-            position: "top-right",
+            position: "top-center",
             autoClose: 3000,
             hideProgressBar: true,
             closeOnClick: true,
@@ -108,7 +109,7 @@ const Login = () => {
           disabled={loading}
           className="w-full bg-black text-white p-2 rounded hover:bg-gray-600"
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? <Loader /> : "Login"}
         </button>
         <p className="text-center mt-4">
           Don't have an account?{" "}
@@ -117,7 +118,6 @@ const Login = () => {
           </Link>
         </p>
       </form>
-      {/* <ToastContainer /> */}
     </div>
   );
 };

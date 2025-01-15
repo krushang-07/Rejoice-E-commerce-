@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../redux/Slices/productSlice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaThLarge, FaTh, FaThList } from "react-icons/fa"; // Import specific icons
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import SkeletonCard from "../utils/SkeletonCard";
 
 const ProductList = () => {
   const dispatch = useDispatch();
@@ -39,7 +42,7 @@ const ProductList = () => {
         setTotalPages(Math.ceil(data.totalProducts / limit));
       })
       .catch((error) => {
-        console.error("Error fetching products:", error);
+        toast.error(error); // Error toast
       });
   }, [dispatch, currentPage, limit, selectedCategory, searchQuery]); // Add searchQuery as dependency
 
@@ -204,21 +207,6 @@ const ProductList = () => {
               ))}
             </ul>
           </nav>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const SkeletonCard = () => {
-  return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-md animate-blink overflow-hidden flex flex-col p-4">
-      <div className="h-64 bg-gray-300 rounded-t-lg animate-pulse"></div>
-      <div className="flex-grow mt-4">
-        <div className="h-6 bg-gray-300 rounded-md mb-4 animate-pulse"></div>
-        <div className="flex items-center justify-between">
-          <div className="h-6 w-24 bg-gray-300 rounded-md animate-pulse"></div>
-          <div className="h-6 w-20 bg-gray-300 rounded-md animate-pulse"></div>
         </div>
       </div>
     </div>

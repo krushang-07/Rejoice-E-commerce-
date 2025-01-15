@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion"; // Import Framer Motion
 import { FaShippingFast, FaShoppingCart, FaHeadset } from "react-icons/fa"; // Icons from React Icons
 import Faq from "../components/Faq";
+import Loader from "../utils/Loader";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -33,7 +34,7 @@ const HomePage = () => {
           console.error(`Error fetching ${category} products:`, error);
         });
     });
-  }, [categories]);
+  }, []);
 
   return (
     <div className="overflow-hidden">
@@ -80,7 +81,6 @@ const HomePage = () => {
             Why Shop With Us?
           </motion.h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
             <motion.div
               className="p-6 hover:shadow-xl transform hover:scale-105 transition duration-300"
               whileHover={{ scale: 1.05 }}
@@ -95,7 +95,6 @@ const HomePage = () => {
                 Enjoy free shipping on all orders over $50.
               </p>
             </motion.div>
-            {/* Feature 2 */}
             <motion.div
               className="p-6 hover:shadow-xl transform hover:scale-105 transition duration-300"
               whileHover={{ scale: 1.05 }}
@@ -110,7 +109,7 @@ const HomePage = () => {
                 Browse products and complete your purchase in minutes.
               </p>
             </motion.div>
-            {/* Feature 3 */}
+
             <motion.div
               className="p-6 hover:shadow-xl transform hover:scale-105 transition duration-300"
               whileHover={{ scale: 1.05 }}
@@ -129,7 +128,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* New Arrivals Section */}
       <section className="py-12 bg-gray-100">
         <div className="container mx-auto text-center">
           <motion.h2
@@ -142,14 +140,7 @@ const HomePage = () => {
           </motion.h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {/* Display one product from each category */}
-            {loading && (
-              <>
-                <div className="bg-white shadow-xl rounded-lg overflow-hidden animate-pulse"></div>
-                <div className="bg-white shadow-xl rounded-lg overflow-hidden animate-pulse"></div>
-                <div className="bg-white shadow-xl rounded-lg overflow-hidden animate-pulse"></div>
-                <div className="bg-white shadow-xl rounded-lg overflow-hidden animate-pulse"></div>
-              </>
-            )}
+            {loading && <Loader />}
             {error && <p className="text-red-500">{error}</p>}
             {categories.map((category) => {
               const product = categoryProducts[category];

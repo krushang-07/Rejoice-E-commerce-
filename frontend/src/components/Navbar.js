@@ -4,20 +4,24 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [cartQuantity, setCartQuantity] = useState(0);
+  const [role, setRole] = useState(localStorage.getItem("role")); // Initialize with the role from localStorage
 
   useEffect(() => {
-    // Fetch the cart quantity from localStorage or an API
     const cartItems =
-      JSON.parse(localStorage.getItem("totalCartQuantity")) || [];
-    console.log(cartItems);
+      JSON.parse(localStorage.getItem("totalCartQuantity")) || 0;
     setCartQuantity(cartItems);
   }, []);
+
+  const handleLogin = (userRole) => {
+    localStorage.setItem("role", userRole);
+    setRole(userRole);
+  };
+
   const handleLogout = () => {
-    // Remove the entire user object from localStorage
     localStorage.removeItem("role");
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
-    window.location.href = "/"; // Redirect to home page after logout
+    setRole(null);
   };
 
   return (
@@ -54,11 +58,12 @@ const Navbar = () => {
             >
               About
             </Link>
-            {!localStorage.getItem("role") ? (
+            {!role ? (
               <>
                 <Link
                   to="/login"
                   className="text-lg hover:text-gray-400 transition duration-300"
+                  onClick={() => handleLogin("customer")} // Simulate login
                 >
                   Login
                 </Link>
@@ -84,7 +89,7 @@ const Navbar = () => {
                 className="text-lg hover:text-gray-400 transition duration-300"
               >
                 <FaShoppingCart className="w-8 h-8 text-black mx-auto " />
-                {cartQuantity >= 0 && (
+                {cartQuantity > 0 && (
                   <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full transform translate-x-2 -translate-y-2">
                     {cartQuantity}
                   </span>

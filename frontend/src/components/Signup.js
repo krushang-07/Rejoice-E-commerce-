@@ -4,12 +4,14 @@ import { registerUser } from "../redux/Slices/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Loader from "../utils/Loader";
 
 const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Access loading and error states from Redux
   const { loading, error, success } = useSelector((state) => state.user);
 
   const formik = useFormik({
@@ -32,12 +34,11 @@ const Signup = () => {
     }),
     onSubmit: async (values) => {
       try {
-        // Dispatch the registerUser action
         await dispatch(registerUser(values));
-        alert("User registered successfully!");
+        toast.success("Customer registered successfully!");
         navigate("/login");
       } catch (err) {
-        console.error("Error registering user:", err);
+        toast.error("Error registering user. Please try again.");
       }
     },
   });
@@ -111,7 +112,7 @@ const Signup = () => {
             disabled={loading}
             className="w-full bg-black text-white p-2 rounded-lg hover:bg-gray-700 transition"
           >
-            {loading ? "Registering..." : "Register"}
+            {loading ? <Loader /> : "Register"}
           </button>
         </form>
         <p className="text-center mt-4">
