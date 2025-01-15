@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../redux/Slices/productSlice";
 import { Link } from "react-router-dom";
@@ -9,39 +9,28 @@ import Loader from "../utils/Loader";
 
 const HomePage = () => {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.products);
-  const [categoryProducts, setCategoryProducts] = useState({
-    mobile: null,
-    tv: null,
-    audio: null,
-    gaming: null,
-  });
-
-  const categories = ["mobile", "tv", "audio", "gaming"];
+  const {
+    loading,
+    error,
+    products: fetchedProducts,
+  } = useSelector((state) => state.products);
 
   useEffect(() => {
-    // Fetch one product for each category
-    categories.forEach((category) => {
-      dispatch(fetchProducts({ page: 1, limit: 1, type: category }))
-        .unwrap()
-        .then((data) => {
-          setCategoryProducts((prev) => ({
-            ...prev,
-            [category]: data.products[0], // Store only one product per category
-          }));
-        })
-        .catch((error) => {
-          console.error(`Error fetching ${category} products:`, error);
-        });
-    });
-  }, []);
+    dispatch(fetchProducts({ page: 1, limit: 4 }))
+      .unwrap()
+      .then((response) => {
+        console.log("Fetched products:", response.products);
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+      });
+  }, [dispatch]);
 
   return (
     <div className="overflow-hidden">
-      {/* Hero Section with Framer Motion for smooth fade-in */}
       <motion.div
         style={{
-          backgroundImage: "url('benner.jpg')", // Dummy image
+          backgroundImage: "url('benner.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "100vh",
@@ -70,6 +59,7 @@ const HomePage = () => {
         </motion.div>
       </motion.div>
 
+      {/* Why Shop With Us Section */}
       <section className="py-12 bg-white">
         <div className="container mx-auto text-center">
           <motion.h2
@@ -128,6 +118,7 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* New Arrivals Section */}
       <section className="py-12 bg-gray-100">
         <div className="container mx-auto text-center">
           <motion.h2
@@ -139,48 +130,49 @@ const HomePage = () => {
             New Arrivals
           </motion.h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {/* Display one product from each category */}
+            {/* Display fetched products */}
             {loading && <Loader />}
             {error && <p className="text-red-500">{error}</p>}
-            {categories.map((category) => {
-              const product = categoryProducts[category];
-              if (product) {
-                return (
-                  <motion.div
-                    key={product._id}
-                    className="bg-white shadow-xl rounded-lg overflow-hidden transition transform hover:scale-105 duration-300"
-                    whileHover={{ scale: 1 }}
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1 }}
+            {fetchedProducts?.products?.map((product) => (
+              <motion.div
+                key={product._id}
+                className="bg-white shadow-xl rounded-lg overflow-hidden transition transform hover:scale-105 duration-300"
+                whileHover={{ scale: 1 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
+              >
+                <img
+                  src={product.image}
+                  alt={product.title}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-xl font-semibold line-clamp-2">
+                    {product.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-600 overflow-hidden overflow-ellipsis line-clamp-2">
+                    {product.description}
+                  </p>
+                  <p className="mt-2 text-lg font-bold">${product.price}</p>
+                  <Link
+                    to={`/product/${product._id}`}
+                    className="mt-4 inline-block bg-black text-white py-2 px-6 rounded-lg hover:bg-gray-700 transition"
                   >
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="p-4">
-                      <h3 className="text-xl font-semibold">{product.title}</h3>
-                      <p className="mt-2 text-lg">${product.price}</p>
-                      <Link
-                        to={`/product/${product._id}`}
-                        className="mt-4 inline-block bg-black text-white py-2 px-6 rounded-lg hover:bg-gray-700 transition"
-                      >
-                        View Details
-                      </Link>
-                    </div>
-                  </motion.div>
-                );
-              }
-              return null;
-            })}
-          </div>
-          <div className="mt-16">
-            <Faq />
+                    View Details
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <div className="mt-16">
+        <Faq />
+      </div>
     </div>
   );
 };

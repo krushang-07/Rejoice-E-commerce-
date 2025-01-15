@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { motion } from "framer-motion"; // Import Framer Motion
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -43,57 +44,92 @@ const Signup = () => {
   });
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">Register</h1>
+    <div className="flex justify-center items-center h-screen bg-white">
+      <motion.div
+        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+      >
+        {/* Logo */}
+        <motion.div
+          className="mb-6 flex justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          <img
+            src="/ecommerce.png"
+            alt="PicknShop Logo"
+            className="w-10 h-10"
+          />
+        </motion.div>
+
+        <h1 className="text-3xl font-semibold text-center text-black mb-6">
+          Register
+        </h1>
+
+        {/* Form */}
         <form onSubmit={formik.handleSubmit}>
-          <input
+          <motion.input
             type="text"
             name="name"
             placeholder="Full Name"
             value={formik.values.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 mb-4 border rounded-lg"
+            className="w-full p-3 mb-4 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
           />
           {formik.touched.name && formik.errors.name && (
             <p className="text-red-500 text-sm">{formik.errors.name}</p>
           )}
 
-          <input
+          <motion.input
             type="email"
             name="email"
             placeholder="Email Address"
             value={formik.values.email}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 mb-4 border rounded-lg"
+            className="w-full p-3 mb-4 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
           />
           {formik.touched.email && formik.errors.email && (
             <p className="text-red-500 text-sm">{formik.errors.email}</p>
           )}
 
-          <input
+          <motion.input
             type="password"
             name="password"
             placeholder="Password"
             value={formik.values.password}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 mb-4 border rounded-lg"
+            className="w-full p-3 mb-4 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
           />
           {formik.touched.password && formik.errors.password && (
             <p className="text-red-500 text-sm">{formik.errors.password}</p>
           )}
 
-          <input
+          <motion.input
             type="text"
             name="address"
             placeholder="Address"
             value={formik.values.address}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 mb-4 border rounded-lg"
+            className="w-full p-3 mb-4 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
           />
           {formik.touched.address && formik.errors.address && (
             <p className="text-red-500 text-sm">{formik.errors.address}</p>
@@ -106,21 +142,31 @@ const Signup = () => {
             </p>
           )}
 
-          <button
+          <motion.button
             type="submit"
             disabled={loading}
-            className="w-full bg-black text-white p-2 rounded-lg hover:bg-gray-700 transition"
+            className="w-full p-3 text-white bg-black rounded-lg hover:bg-gray-800 transition-all duration-200 ease-in-out"
+            whileHover={{ scale: 1.05 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9, duration: 0.5 }}
           >
             {loading ? "Registering..." : "Register"}
-          </button>
+          </motion.button>
         </form>
-        <p className="text-center mt-4">
+
+        <motion.p
+          className="text-center mt-4 text-black"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.5 }}
+        >
           Already have an account?{" "}
           <Link to="/login" className="text-black hover:underline">
             Login
           </Link>
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
     </div>
   );
 };

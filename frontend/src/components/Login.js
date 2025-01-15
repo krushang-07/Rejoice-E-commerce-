@@ -6,12 +6,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { motion } from "framer-motion"; // Import Framer Motion
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const { loading, error } = useSelector((state) => state.user); // Access loading and error from Redux
+  const { loading, error } = useSelector((state) => state.user);
 
   const formik = useFormik({
     initialValues: {
@@ -28,22 +28,20 @@ const Login = () => {
       const formData = { ...values };
       try {
         const response = await dispatch(loginUser(formData)).unwrap();
-        // Storing user data in localStorage
         localStorage.setItem("token", response.token);
         localStorage.setItem("role", response.role);
         localStorage.setItem("userId", response.userId);
 
-        // Show a toaster based on user role
         if (response.role === "admin") {
           toast.success("Admin login successful", {
-            position: "top-center",
+            position: "top-right",
             autoClose: 3000,
             hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
           });
-          navigate("/admin"); // Redirect to admin dashboard
+          navigate("/admin");
         } else {
           toast.success("Customer login successful", {
             position: "top-right",
@@ -53,7 +51,7 @@ const Login = () => {
             pauseOnHover: true,
             draggable: true,
           });
-          navigate("/"); // Redirect to homepage
+          navigate("/");
         }
       } catch (err) {
         console.error("Login failed:", err);
@@ -62,16 +60,32 @@ const Login = () => {
   });
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <form
+    <div className="flex justify-center items-center h-screen bg-white">
+      <motion.form
         onSubmit={formik.handleSubmit}
-        className="bg-white p-6 rounded shadow-lg w-96"
+        className="bg-white p-8 rounded-lg shadow-lg w-96"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
       >
-        <h2 className="text-2xl mb-4">Login</h2>
+        <motion.div
+          className="mb-6 flex justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          <img src="ecommerce.png" alt="PicknShop Logo" className="w-10 h-10" />
+        </motion.div>
+
+        <h2 className="text-3xl font-semibold text-center text-black mb-6">
+          Login
+        </h2>
+
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        <div className="mb-4">
-          <label className="block mb-2" htmlFor="email">
-            Email
+
+        <div className="mb-6">
+          <label className="block mb-2 text-black" htmlFor="email">
+            Email Address
           </label>
           <input
             type="email"
@@ -79,15 +93,16 @@ const Login = () => {
             value={formik.values.email}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
             required
           />
           {formik.touched.email && formik.errors.email && (
             <p className="text-red-500 text-sm">{formik.errors.email}</p>
           )}
         </div>
-        <div className="mb-4">
-          <label className="block mb-2" htmlFor="password">
+
+        <div className="mb-6">
+          <label className="block mb-2 text-black" htmlFor="password">
             Password
           </label>
           <input
@@ -96,27 +111,38 @@ const Login = () => {
             value={formik.values.password}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
             required
           />
           {formik.touched.password && formik.errors.password && (
             <p className="text-red-500 text-sm">{formik.errors.password}</p>
           )}
         </div>
-        <button
+
+        <motion.button
           type="submit"
           disabled={loading}
-          className="w-full bg-black text-white p-2 rounded hover:bg-gray-600"
+          className="w-full p-3 text-white bg-black rounded-lg hover:bg-gray-800 transition-all duration-200 ease-in-out"
+          whileHover={{ scale: 1.05 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7, duration: 0.5 }}
         >
           {loading ? "Logging in..." : "Login"}
-        </button>
-        <p className="text-center mt-4">
+        </motion.button>
+
+        <motion.p
+          className="text-center mt-4 text-black"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.5 }}
+        >
           Don't have an account?{" "}
           <Link to="/signup" className="text-black hover:underline">
             Signup
           </Link>
-        </p>
-      </form>
+        </motion.p>
+      </motion.form>
     </div>
   );
 };

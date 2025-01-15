@@ -6,6 +6,7 @@ import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./utils/PrivateRoutes.js";
 import axios from "axios";
 import Loader from "./utils/Loader.js";
+import Offer from "./components/Offer.js";
 
 axios.defaults.baseURL = "http://localhost:5000/";
 
@@ -19,10 +20,12 @@ const AboutPage = lazy(() => import("./pages/AboutPage.js"));
 const ProductItemPage = lazy(() => import("./pages/ProductItemPage.js"));
 const CheckOutPage = lazy(() => import("./pages/CheckOutPage.js"));
 const Chatbot = lazy(() => import("./components/Chatbot.js"));
+const ContactUsPage = lazy(() => import("./components/ContactUs.js"));
 
 function App() {
   return (
     <Router>
+      <Offer />
       <Navbar />
       <ToastContainer />
       <Suspense fallback={<Loader />}>
@@ -52,6 +55,7 @@ function App() {
           <Route path="/product/:id" element={<ProductItemPage />} />
           <Route path="/checkout" element={<CheckOutPage />} />
           <Route path="/chat-bot" element={<Chatbot />} />
+          <Route path="/contact-us" element={<ContactUsPage />} />
         </Routes>
       </Suspense>
       <Footer />

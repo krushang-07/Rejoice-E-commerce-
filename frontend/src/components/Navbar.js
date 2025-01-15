@@ -26,20 +26,17 @@ const Navbar = () => {
 
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-md">
-      <div className="bg-gradient-to-r bg-white text-black p-4 shadow-lg">
+      <div className="bg-gradient-to-r from-white to-gray-200 text-black p-4 shadow-lg">
         <div className="container mx-auto flex justify-between items-center">
           {/* Logo and Home Link */}
-          <div className="text-3xl font-extrabold text-white flex">
+          <div className="text-3xl font-extrabold text-black flex">
             <Link to="/">
-              <img
-                src="/ecommerce.png"
-                alt="logo"
-                style={{ width: 50, height: 50, margin: 10, marginLeft: 30 }}
-              />
+              <img src="/ecommerce.png" alt="logo" className="w-12 h-12 mx-4" />
             </Link>
           </div>
 
-          <div className="flex items-center space-x-8">
+          {/* Navigation Links */}
+          <div className="flex space-x-8 items-center">
             <Link
               to="/"
               className="text-lg hover:text-gray-400 transition duration-300"
@@ -58,6 +55,17 @@ const Navbar = () => {
             >
               About
             </Link>
+            <Link
+              to="/contact-us"
+              className="text-lg hover:text-gray-400 transition duration-300"
+            >
+              Contact Us
+            </Link>
+          </div>
+
+          {/* User and Cart Options */}
+          <div className="flex items-center space-x-4">
+            {/* Login/Signup or Logout */}
             {!role ? (
               <>
                 <Link
@@ -83,12 +91,13 @@ const Navbar = () => {
               </button>
             )}
 
+            {/* Cart Icon */}
             <div className="relative">
               <Link
                 to="/cart"
                 className="text-lg hover:text-gray-400 transition duration-300"
               >
-                <FaShoppingCart className="w-8 h-8 text-black mx-auto " />
+                <FaShoppingCart className="w-8 h-8 text-black mx-auto" />
                 {cartQuantity > 0 && (
                   <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full transform translate-x-2 -translate-y-2">
                     {cartQuantity}
