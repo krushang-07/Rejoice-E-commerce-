@@ -6,6 +6,7 @@ import { FaThLarge, FaTh, FaThList } from "react-icons/fa"; // Import specific i
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SkeletonCard from "../utils/SkeletonCard";
+import useDebounce from "../Hooks/useDebounce";
 
 const ProductList = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,8 @@ const ProductList = () => {
   const [columns, setColumns] = useState(4);
   const [currentPageProducts, setCurrentPageProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [searchQuery, setSearchQuery] = useState(""); // Track search query
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -33,7 +35,7 @@ const ProductList = () => {
         page: currentPage,
         limit,
         type: selectedCategory || "",
-        search: searchQuery, // Pass search query to fetchProducts
+        search: debouncedSearchQuery,
       })
     )
       .unwrap()
@@ -44,7 +46,7 @@ const ProductList = () => {
       .catch((error) => {
         toast.error(error); // Error toast
       });
-  }, [dispatch, currentPage, limit, selectedCategory, searchQuery]); // Add searchQuery as dependency
+  }, [dispatch, currentPage, limit, selectedCategory, debouncedSearchQuery]); // Add searchQuery as dependency
 
   const handleCategorySelect = (category) => {
     const queryParams = new URLSearchParams(location.search);

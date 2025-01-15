@@ -11,6 +11,7 @@ import {
 } from "../redux/Slices/cartSlice";
 import axios from "axios";
 import Loader from "../utils/Loader";
+import EmptyCart from "../utils/EmptyCast";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -107,12 +108,9 @@ const Cart = () => {
         <Loader />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left Side: Cart Items */}
           <div className="space-y-6 w-full">
             {items.length === 0 ? (
-              <div className="text-center text-lg text-gray-500">
-                Your cart is empty!
-              </div>
+              <EmptyCart />
             ) : (
               items.map((item) => (
                 <div
@@ -167,7 +165,6 @@ const Cart = () => {
             )}
           </div>
 
-          {/* Right Side: Cart Summary and Checkout */}
           <div className="bg-gray-50 p-8 rounded-lg shadow-lg w-full">
             <h3 className="text-2xl font-semibold text-gray-700">
               Cart Summary

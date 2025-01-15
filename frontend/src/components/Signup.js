@@ -6,7 +6,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loader from "../utils/Loader";
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -112,7 +111,7 @@ const Signup = () => {
             disabled={loading}
             className="w-full bg-black text-white p-2 rounded-lg hover:bg-gray-700 transition"
           >
-            {loading ? <Loader /> : "Register"}
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
         <p className="text-center mt-4">
