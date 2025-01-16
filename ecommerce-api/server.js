@@ -37,30 +37,25 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/cart", cartRoutes);
 
-// Payment Intent Route
 app.post("/create-payment-intent", async (req, res) => {
   const { userId } = req.body;
 
-  // Validate userId
   if (!userId) {
     return res.status(400).json({ message: "userId is required" });
   }
+
   try {
-    //Retrieve the cart for the given user
     const cart = await Cart.findOne({ userId });
-    // Return the payment link URL to the client
     const cartItems = cart.items;
+
     let products = await Promise.all(
       cartItems.map(async (item) => {
-        // console.log(item.productId);
         const product = await Product.findById(item.productId);
-        // console.log(product);
         const price = await stripe.prices.create({
           unit_amount: product.price * 100,
           currency: "usd",
           product_data: {
             name: product.title,
-            // images: [product.image], // Add image URL from product
           },
         });
         return {
@@ -69,19 +64,27 @@ app.post("/create-payment-intent", async (req, res) => {
         };
       })
     );
-    const paymentLink = await stripe.paymentLinks.create({
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
       line_items: products,
-      metadata: {
-        userId, // Include userId in metadata
-      },
+      mode: "payment",
+      discounts: [
+        {
+          coupon: "PVNyXIsK",
+        },
+      ],
       shipping_address_collection: {
-        allowed_countries: ["US", "IN"], // Specify allowed countries for delivery
+        allowed_countries: ["US", "IN"],
       },
       billing_address_collection: "required", // Require billing address
+      success_url: `http://localhost:3000/success`, // Redirect URL after successful payment
+      cancel_url: `http://localhost:3000/cancel`, // Redirect URL if payment is canceled
     });
-    res.status(200).json({ url: paymentLink.url });
+
+    res.status(200).json({ url: session.url });
   } catch (error) {
-    console.error("Error creating payment intent:", error);
+    console.error("Error creating checkout session:", error);
     res.status(500).json({ error: error.message });
   }
 });

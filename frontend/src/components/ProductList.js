@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../redux/Slices/productSlice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaThLarge, FaTh, FaThList } from "react-icons/fa"; // Import specific icons
+import { FaThLarge, FaTh, FaThList } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SkeletonCard from "../utils/SkeletonCard";
@@ -23,6 +23,9 @@ const ProductList = () => {
   const [selectedCategory, setSelectedCategory] = useState(
     new URLSearchParams(location.search).get("type") || ""
   );
+  const [sortOrder, setSortOrder] = useState(
+    new URLSearchParams(location.search).get("sort") || ""
+  );
 
   const categories = [
     "mobile",
@@ -31,6 +34,12 @@ const ProductList = () => {
     "gaming",
     "laptop",
     "appliances",
+  ];
+
+  const sortOptions = [
+    { value: "", label: "Default" },
+    { value: "asc", label: "Price: Low to High" },
+    { value: "desc", label: "Price: High to Low" },
   ];
 
   const queryParams = new URLSearchParams(location.search);
@@ -44,6 +53,7 @@ const ProductList = () => {
         limit,
         type: selectedCategory || "",
         search: debouncedSearchQuery,
+        sort: sortOrder,
       })
     )
       .unwrap()
@@ -54,7 +64,14 @@ const ProductList = () => {
       .catch((error) => {
         toast.error(error); // Error toast
       });
-  }, [dispatch, currentPage, limit, selectedCategory, debouncedSearchQuery]);
+  }, [
+    dispatch,
+    currentPage,
+    limit,
+    selectedCategory,
+    debouncedSearchQuery,
+    sortOrder,
+  ]);
 
   const handleCategorySelect = (category) => {
     const queryParams = new URLSearchParams(location.search);
@@ -62,6 +79,15 @@ const ProductList = () => {
     queryParams.set("page", 1);
     const encodedUrl = queryParams.toString();
     setSelectedCategory(category);
+    navigate({ search: encodedUrl });
+  };
+
+  const handleSortSelect = (sort) => {
+    const queryParams = new URLSearchParams(location.search);
+    queryParams.set("sort", sort);
+    queryParams.set("page", 1);
+    const encodedUrl = queryParams.toString();
+    setSortOrder(sort);
     navigate({ search: encodedUrl });
   };
 
@@ -87,11 +113,11 @@ const ProductList = () => {
           <select
             onChange={(e) => handleCategorySelect(e.target.value)}
             value={selectedCategory}
-            className="px-4 py-2 border rounded-md w-48 "
+            className="px-4 py-2 border rounded-md w-48"
           >
-            <option value="">All Category</option>
+            <option value="">All Categories</option>
             {categories.map((category) => (
-              <option className="" key={category} value={category}>
+              <option key={category} value={category}>
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </option>
             ))}
@@ -104,6 +130,19 @@ const ProductList = () => {
             className="px-4 py-2 border rounded-md w-1/3"
             placeholder="Search products..."
           />
+
+          {/* Sorting Selector */}
+          <select
+            onChange={(e) => handleSortSelect(e.target.value)}
+            value={sortOrder}
+            className="px-4 py-2 border rounded-md w-48"
+          >
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
           <div className="space-x-4 flex">
             <button
@@ -139,25 +178,14 @@ const ProductList = () => {
           </div>
         </div>
 
-        {/* Product Grid */}
         <div
           style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
           className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >
-          {loading && (
-            <>
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-            </>
-          )}
+          {loading &&
+            Array.from({ length: 15 }).map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
           {error && <p className="text-red-500">{error}</p>}
           {currentPageProducts.length > 0 &&
             currentPageProducts.map((product) => (

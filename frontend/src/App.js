@@ -7,6 +7,8 @@ import PrivateRoute from "./utils/PrivateRoutes.js";
 import axios from "axios";
 import Loader from "./utils/Loader.js";
 import Offer from "./components/Offer.js";
+import Success from "./components/Success.js";
+import Cancel from "./components/Cancel.js";
 
 axios.defaults.baseURL = "http://localhost:5000/";
 
@@ -56,6 +58,8 @@ function App() {
           <Route path="/checkout" element={<CheckOutPage />} />
           <Route path="/chat-bot" element={<Chatbot />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
+          <Route path="/success" element={<Success />} />
+          <Route path="/cancel" element={<Cancel />} />
         </Routes>
       </Suspense>
       <Footer />

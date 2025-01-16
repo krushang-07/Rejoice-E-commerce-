@@ -37,7 +37,13 @@ const Product = require("../models/productSchema");
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 5, type = "", search = "" } = req.query;
+    const {
+      page = 1,
+      limit = 5,
+      type = "",
+      search = "",
+      sort = "asc",
+    } = req.query;
 
     const pageNumber = parseInt(page, 10);
     const pageLimit = parseInt(limit, 10);
@@ -55,7 +61,11 @@ exports.getAllProducts = async (req, res) => {
       ];
     }
 
+    // Determine sort order (ascending or descending)
+    const sortOrder = sort === "desc" ? -1 : 1;
+
     const products = await Product.find(query)
+      .sort({ price: sortOrder }) // Add sorting by price
       .skip((pageNumber - 1) * pageLimit)
       .limit(pageLimit);
 

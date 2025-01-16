@@ -21,10 +21,10 @@ const API = axios.create({
 //   }
 // );
 
-//based on query
+// Async thunk for fetching products based on query
 export const fetchProducts = createAsyncThunk(
   "products/fetchAll",
-  async ({ search, page, limit, type }, { rejectWithValue }) => {
+  async ({ search, page, limit, type, sort }, { rejectWithValue }) => {
     try {
       // Construct the query parameters dynamically
       const response = await API.get("/products", {
@@ -33,6 +33,7 @@ export const fetchProducts = createAsyncThunk(
           limit, // Items per page (e.g., 10)
           type,
           search,
+          sort, // Sorting parameter (e.g., "asc" or "desc")
         },
       });
       return response.data; // Return the products data from the response
@@ -43,7 +44,6 @@ export const fetchProducts = createAsyncThunk(
     }
   }
 );
-
 export const fetchProductById = createAsyncThunk(
   "products/fetchById",
   async (productId, { rejectWithValue }) => {
@@ -96,7 +96,7 @@ const productSlice = createSlice({
     builder.addCase(fetchProductById.fulfilled, (state, action) => {
       state.loading = false;
       state.product = action.payload; // Set the fetched product details to state
-      console.log(state.product);
+      // console.log(state.product);
     });
     builder.addCase(fetchProductById.rejected, (state, action) => {
       state.loading = false;
