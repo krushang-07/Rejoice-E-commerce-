@@ -90,7 +90,12 @@ const Navbar = () => {
                 Logout
               </button>
             )}
-
+            <Link
+              to="/orders"
+              className="text-lg hover:text-gray-400 transition duration-300"
+            >
+              Orders
+            </Link>
             {/* Cart Icon */}
             <div className="relative">
               <Link

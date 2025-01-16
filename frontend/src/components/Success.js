@@ -1,8 +1,30 @@
-// src/pages/success.js
-import React from "react";
-import { FaCheckCircle } from "react-icons/fa"; // For success icon
+import React, { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import axios from "axios";
+import { FaCheckCircle } from "react-icons/fa"; // Ensure you import FaCheckCircle
 
 const Success = () => {
+  const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (sessionId) {
+      // Fetch session data from the backend
+      axios
+        .post("/store-order", {
+          sessionId,
+          userId, // Replace with the logged-in user's ID
+        })
+        .then((response) => {
+          console.log("Order stored successfully:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error storing order:", error);
+        });
+    }
+  }, [sessionId]);
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 text-center">
       <div className="p-8 bg-white shadow-lg rounded-lg w-full max-w-lg">

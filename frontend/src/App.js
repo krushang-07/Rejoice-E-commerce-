@@ -9,6 +9,7 @@ import Loader from "./utils/Loader.js";
 import Offer from "./components/Offer.js";
 import Success from "./components/Success.js";
 import Cancel from "./components/Cancel.js";
+import Orders from "./components/Orders.js";
 
 axios.defaults.baseURL = "http://localhost:5000/";
 
@@ -60,6 +61,7 @@ function App() {
           <Route path="/contact-us" element={<ContactUsPage />} />
           <Route path="/success" element={<Success />} />
           <Route path="/cancel" element={<Cancel />} />
+          <Route path="/orders" element={<Orders />} />
         </Routes>
       </Suspense>
       <Footer />

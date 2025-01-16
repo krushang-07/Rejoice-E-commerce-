@@ -4,10 +4,8 @@ const connectDB = require("./config/db");
 const bodyParser = require("body-parser");
 const Cart = require("./models/cartSchema.js");
 const Product = require("./models/productSchema.js");
-const { OpenAI } = require("openai");
-const ChatHistory = require("./models/chatHistorySchema.js"); // Define a model for chat history
-
-// const Order = require("./models/cartSchema.js");
+// const { OpenAI } = require("openai");
+// const ChatHistory = require("./models/chatHistorySchema.js"); // Define a model for chat history
 const Stripe = require("stripe");
 const cors = require("cors");
 
@@ -17,10 +15,12 @@ const app = express();
 const productRoutes = require("./routes/productRoutes.js");
 const cartRoutes = require("./routes/cartRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
+const orderRoutes = require("./routes/orderRoutes.js");
+const Order = require("./models/orderSchema.js");
 
-app.use(express.urlencoded({ extended: true })); // For parsing URL encoded query params
+app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors({ origin: "http://localhost:3000", credentials: true })); // Enable CORS
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 // Initialize Stripe with secret key
 const stripe = Stripe(
@@ -36,17 +36,71 @@ app.get("/", (req, res) => {
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
 
+// Route to handle success and store order data
+app.post("/store-order", async (req, res) => {
+  const { sessionId, userId } = req.body;
+
+  if (!sessionId || !userId) {
+    return res
+      .status(400)
+      .json({ error: "Session ID and User ID are required" });
+  }
+
+  try {
+    // Retrieve Stripe session details
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    if (!session) {
+      return res.status(404).json({ error: "Session not found" });
+    }
+
+    // Retrieve cart details for the user
+    const cart = await Cart.findOne({ userId });
+    if (!cart) {
+      return res.status(404).json({ error: "Cart not found for the user" });
+    }
+
+    const products = cart.items.map((item) => ({
+      productId: item.productId,
+      quantity: item.quantity,
+    }));
+
+    // Create and save the order in your database
+    const order = new Order({
+      orderId: session.metadata.orderId,
+      userId,
+      products,
+      totalAmount: session.amount_total / 100, // Convert cents to dollars
+      paymentMethod: session.payment_method_types[0],
+      status: "Paid",
+    });
+
+    await order.save();
+
+    // Clear the user's cart after successful order
+    await Cart.deleteOne({ userId });
+
+    res.status(201).json({ message: "Order saved successfully", order });
+  } catch (error) {
+    console.error("Error storing order:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Create payment intent route
 app.post("/create-payment-intent", async (req, res) => {
   const { userId } = req.body;
 
   if (!userId) {
-    return res.status(400).json({ message: "userId is required" });
+    return res.status(400).json({ error: "User ID is required" });
   }
 
   try {
     const cart = await Cart.findOne({ userId });
     const cartItems = cart.items;
+    const orderId = `order_${Date.now()}`; // Generate a unique order ID
 
     let products = await Promise.all(
       cartItems.map(async (item) => {
@@ -68,7 +122,6 @@ app.post("/create-payment-intent", async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: products,
-      mode: "payment",
       discounts: [
         {
           coupon: "PVNyXIsK",
@@ -78,54 +131,22 @@ app.post("/create-payment-intent", async (req, res) => {
         allowed_countries: ["US", "IN"],
       },
       billing_address_collection: "required", // Require billing address
-      success_url: `http://localhost:3000/success`, // Redirect URL after successful payment
-      cancel_url: `http://localhost:3000/cancel`, // Redirect URL if payment is canceled
+      mode: "payment",
+      success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://localhost:3000/cancel`,
+      metadata: {
+        orderId,
+        userId,
+      },
     });
 
     res.status(200).json({ url: session.url });
   } catch (error) {
     console.error("Error creating checkout session:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
-
-//CHat bot
-// Endpoint to send message to Dialogflow and get response
-// app.post("/api/chatbot", async (req, res) => {
-//   const userMessage = req.body.message;
-
-//   if (!userMessage) {
-//     return res.status(400).json({ error: "Message is required" });
-//   }
-
-//   try {
-//     // Send message to Dialogflow API
-//     const response = await axios.post(
-//       "https://dialogflow.googleapis.com/v2/projects/YOUR_PROJECT_ID/agent/sessions/YOUR_SESSION_ID:detectIntent",
-//       {
-//         queryInput: {
-//           text: {
-//             text: userMessage,
-//             languageCode: "en",
-//           },
-//         },
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add your Dialogflow API access token here
-//         },
-//       }
-//     );
-
-//     const chatbotResponse = response.data.queryResult.fulfillmentText;
-//     res.json({ response: chatbotResponse });
-//   } catch (error) {
-//     console.error("Error with chatbot API:", error);
-//     res.status(500).json({ error: "Error communicating with the AI model" });
-//   }
-// });
-
-// // Server Setup
+// Server Setup
 const PORT = process.env.PORT || 5000;
 connectDB();
 app.listen(PORT, () => {
