@@ -1,4 +1,5 @@
 const express = require("express");
+const multer = require("multer");
 const {
   getAllProducts,
   createProduct,
@@ -10,9 +11,13 @@ const adminAuthMiddleware = require("../middlewares/adminAuthMiddleware");
 
 const router = express.Router();
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+// Routes
 router.get("/", getAllProducts);
 router.get("/:id", getProductById);
-router.post("/", adminAuthMiddleware, createProduct);
+router.post("/", upload.single("image"), createProduct);
 router.patch("/:id", adminAuthMiddleware, updateProduct);
 router.delete("/:id", adminAuthMiddleware, deleteProduct);
 

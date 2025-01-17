@@ -6,34 +6,18 @@ const API = axios.create({
   baseURL: "http://localhost:5000/api", // Replace with your backend base URL
 });
 
-// Async thunk to fetch all products for normal all product fetch
-// export const fetchProducts = createAsyncThunk(
-//   "products/fetchAll",
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const response = await API.get("/products"); // Endpoint to fetch products
-//       return response.data; // Return the products data from the response
-//     } catch (err) {
-//       return rejectWithValue(
-//         err.response?.data?.message || "Failed to fetch products"
-//       );
-//     }
-//   }
-// );
-
-// Async thunk for fetching products based on query
+// Async thunk to fetch all products
 export const fetchProducts = createAsyncThunk(
   "products/fetchAll",
   async ({ search, page, limit, type, sort }, { rejectWithValue }) => {
     try {
-      // Construct the query parameters dynamically
       const response = await API.get("/products", {
         params: {
-          page, // Page number (e.g., 1)
-          limit, // Items per page (e.g., 10)
+          page,
+          limit,
           type,
           search,
-          sort, // Sorting parameter (e.g., "asc" or "desc")
+          sort,
         },
       });
       return response.data; // Return the products data from the response
@@ -44,15 +28,15 @@ export const fetchProducts = createAsyncThunk(
     }
   }
 );
+
+// Async thunk to fetch a single product by ID
 export const fetchProductById = createAsyncThunk(
   "products/fetchById",
   async (productId, { rejectWithValue }) => {
     try {
       const response = await API.get(`/products/${productId}`);
-      console.log("API Response:", response.data); // Debugging line
       return response.data; // The product data
     } catch (error) {
-      console.error(error); // More detailed error handling
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch product details"
       );
@@ -60,12 +44,47 @@ export const fetchProductById = createAsyncThunk(
   }
 );
 
+export const createProduct = createAsyncThunk(
+  "products/create",
+  async (productData, { rejectWithValue }) => {
+    try {
+      // Prepare FormData to handle file uploads
+      const formData = new FormData();
+
+      // Append product details to FormData
+      formData.append("title", productData.title);
+      formData.append("description", productData.description);
+      formData.append("price", productData.price);
+      formData.append("category", productData.category);
+      formData.append("brand", productData.brand);
+      formData.append("model", productData.model);
+      formData.append("color", productData.color);
+      formData.append("discount", productData.discount);
+
+      // Append image file to FormData if it exists
+      if (productData.image) {
+        formData.append("image", productData.image); // productData.image should be a File object
+      }
+
+      // Make the API call to create the product
+      const response = await API.post("/products", formData);
+
+      return response.data; // Return the newly created product data
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to create product"
+      );
+    }
+  }
+);
+
 // Initial state
 const initialState = {
-  products: [],
-  product: null, // To store single product details
-  loading: false,
-  error: null,
+  products: [], // List of all products
+  product: null, // Details of a single product
+  loading: false, // Loading state
+  error: null, // Error messages
+  createStatus: null,
 };
 
 // Create a slice for products
@@ -96,13 +115,31 @@ const productSlice = createSlice({
     builder.addCase(fetchProductById.fulfilled, (state, action) => {
       state.loading = false;
       state.product = action.payload; // Set the fetched product details to state
-      // console.log(state.product);
     });
     builder.addCase(fetchProductById.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload; // Set error message for fetching product details
     });
+
+    // Handle creating a product
+    builder.addCase(createProduct.pending, (state) => {
+      state.createStatus = "pending";
+      state.error = null;
+    });
+    builder.addCase(createProduct.fulfilled, (state, action) => {
+      state.createStatus = "success";
+      if (Array.isArray(state.products)) {
+        state.products.push(action.payload); // Add the new product to the list
+      } else {
+        state.products = [action.payload]; // Reinitialize if it's not an array
+      }
+    });
+    builder.addCase(createProduct.rejected, (state, action) => {
+      state.createStatus = "failed";
+      state.error = action.payload;
+    });
   },
 });
 
+// Export the reducer to configure the store
 export default productSlice.reducer;

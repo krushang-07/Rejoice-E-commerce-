@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
-  const role = localStorage.getItem("role");
+  const [role, setRole] = useState(localStorage.getItem("role")); // Initialize with the role from localStorage
 
   // Calculate total cart quantity
   const cartQuantity = cartItems.reduce(
@@ -13,11 +13,17 @@ const Navbar = () => {
     0
   );
 
+  const handleLogin = (userRole) => {
+    localStorage.setItem("role", userRole);
+    setRole(userRole);
+  };
+
   console.log(cartQuantity);
   const handleLogout = () => {
     localStorage.removeItem("role");
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
+    setRole(null);
     // Optionally, redirect or refresh the page
   };
 
@@ -68,6 +74,7 @@ const Navbar = () => {
                 <Link
                   to="/login"
                   className="text-lg hover:text-gray-400 transition duration-300"
+                  onClick={() => handleLogin("customer")} // Simulate login
                 >
                   Login
                 </Link>

@@ -1,39 +1,16 @@
 const Product = require("../models/productSchema");
+const cloudinary = require("cloudinary").v2;
+const multer = require("multer");
 
-// exports.getAllProducts = async (req, res) => {
-//   try {
-//     // Destructure and provide default values if not present
-//     const { page = 1, limit = 5, type } = req.query;
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
 
-//     // Convert to numbers
-//     const pageNumber = parseInt(page, 10);
-//     const pageLimit = parseInt(limit, 10);
-
-//     // Build the query based on the type (category)
-//     const query = type ? { category: type } : {}; // Filter by category if 'type' exists
-
-//     // Fetch products with pagination and category filter
-//     const products = await Product.find(query)
-//       .skip((pageNumber - 1) * pageLimit) // Skip products for previous pages
-//       .limit(pageLimit); // Limit products per page
-
-//     // Get total count of products for pagination
-//     const totalProducts = await Product.countDocuments(query);
-
-//     // Send the response with paginated data
-//     res.status(200).json({
-//       products,
-//       totalProducts,
-//       currentPage: pageNumber,
-//       totalPages: Math.ceil(totalProducts / pageLimit),
-//       message: type
-//         ? `Products fetched for category: ${type}`
-//         : "All products fetched.",
-//     });
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
 
 exports.getAllProducts = async (req, res) => {
   try {
@@ -54,18 +31,16 @@ exports.getAllProducts = async (req, res) => {
       query.category = type; // Filter by category if 'type' exists
     }
 
-    // If 'search' exists, search across title, description, or category
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: "i" } }, // Case-insensitive title search
       ];
     }
 
-    // Determine sort order (ascending or descending)
     const sortOrder = sort === "desc" ? -1 : 1;
 
     const products = await Product.find(query)
-      .sort({ price: sortOrder }) // Add sorting by price
+      .sort({ price: sortOrder })
       .skip((pageNumber - 1) * pageLimit)
       .limit(pageLimit);
 
@@ -83,14 +58,66 @@ exports.getAllProducts = async (req, res) => {
         : "All products fetched.",
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching products: " + err.message });
   }
 };
 
-exports.createProduct = async (req, res) => {
-  const { name, price, description, category } = req.body;
+// Cloudinary image upload function for base64 string
+const uploadToCloudinary = async (image) => {
   try {
-    const newProduct = new Product({ name, price, description, category });
+    const result = await cloudinary.uploader.upload(image, {
+      folder: "pick_n_shop",
+      resource_type: "image",
+    });
+    console.log(result);
+    return result.secure_url;
+  } catch (error) {
+    throw new Error("Cloudinary upload failed: " + error.message);
+  }
+};
+
+// In your createProduct API route
+exports.createProduct = async (req, res) => {
+  const {
+    title,
+    description,
+    price,
+    category,
+    brand,
+    model,
+    color,
+    discount,
+    image,
+  } = req.body;
+
+  if (
+    !title ||
+    !description ||
+    !price ||
+    !category ||
+    !brand ||
+    !model ||
+    !color
+  ) {
+    return res.status(400).json({ message: "All fields are required." });
+  }
+
+  try {
+    // Create and save the product
+    const newProduct = new Product({
+      title,
+      description,
+      price,
+      category,
+      brand,
+      model,
+      color,
+      discount,
+      image, // Save Cloudinary image URL
+    });
+
     await newProduct.save();
     res.status(201).json(newProduct);
   } catch (error) {
@@ -98,36 +125,43 @@ exports.createProduct = async (req, res) => {
   }
 };
 
+// Get product by ID
 exports.getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-    if (!product) return res.send(404).json({ message: "Product not Found" });
+    if (!product) return res.status(404).json({ message: "Product not Found" });
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching product: " + error.message });
   }
 };
 
+// Update product
 exports.updateProduct = async (req, res) => {
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       req.body,
-      {
-        new: true,
-      }
+      { new: true }
     );
+    if (!updatedProduct)
+      return res.status(404).json({ message: "Product not found" });
     res.status(200).json(updatedProduct);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 };
 
+// Delete product
 exports.deleteProduct = async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
+    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+    if (!deletedProduct)
+      return res.status(404).json({ message: "Product not found" });
     res.status(200).json({ message: "Product deleted" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Error deleting product: " + err.message });
   }
 };
