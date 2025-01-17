@@ -23,9 +23,7 @@ app.use(bodyParser.json());
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 // Initialize Stripe with secret key
-const stripe = Stripe(
-  "sk_test_51Qc4gmPUsWYOZnHCaz4VC7JGjTvMm1BaCPDRJ7iYyNd2ETtQlVZXVmlV2zork0Vl1QWFl32OWw6d0aeMNi69DFmI00tIpZQuAX"
-);
+const stripe = Stripe(process.env.STRIPE_KEY);
 
 // Root Route
 app.get("/", (req, res) => {
@@ -124,7 +122,7 @@ app.post("/create-payment-intent", async (req, res) => {
       line_items: products,
       discounts: [
         {
-          coupon: "PVNyXIsK",
+          coupon: process.env.COUPON_KEY,
         },
       ],
       shipping_address_collection: {
