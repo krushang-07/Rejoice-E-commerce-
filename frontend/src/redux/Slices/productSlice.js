@@ -9,7 +9,10 @@ const API = axios.create({
 // Async thunk to fetch all products
 export const fetchProducts = createAsyncThunk(
   "products/fetchAll",
-  async ({ search, page, limit, type, sort }, { rejectWithValue }) => {
+  async (
+    { search, page, limit, type, sort, maxPrice, minPrice, brand },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await API.get("/products", {
         params: {
@@ -18,8 +21,26 @@ export const fetchProducts = createAsyncThunk(
           type,
           search,
           sort,
+          minPrice,
+          maxPrice,
+          brand,
         },
       });
+      return response.data; // Return the products data from the response
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to fetch products"
+      );
+    }
+  }
+);
+
+// Async thunk to fetch all products without any query parameters (for home page)
+export const fetchAllProducts = createAsyncThunk(
+  "products/fetchAllWithoutParams",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await API.get("/products"); // No query params
       return response.data; // Return the products data from the response
     } catch (err) {
       return rejectWithValue(
@@ -85,6 +106,7 @@ const initialState = {
   loading: false, // Loading state
   error: null, // Error messages
   createStatus: null,
+  hasMore: true,
 };
 
 // Create a slice for products
@@ -101,10 +123,26 @@ const productSlice = createSlice({
     builder.addCase(fetchProducts.fulfilled, (state, action) => {
       state.loading = false;
       state.products = action.payload; // Set fetched products to state
+      state.hasMore = true;
     });
     builder.addCase(fetchProducts.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload; // Set error message for fetching products
+      state.hasMore = false;
+    });
+
+    builder.addCase(fetchAllProducts.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchAllProducts.fulfilled, (state, action) => {
+      state.loading = false;
+      state.products = action.payload; // Set all products to state
+      state.hasMore = action.payload.products.length > 0;
+    });
+    builder.addCase(fetchAllProducts.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload; // Set error message
     });
 
     // Handle fetching a single product by ID

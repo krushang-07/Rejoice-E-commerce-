@@ -17,11 +17,16 @@ const ProductList = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const debouncedPriceRange = useDebounce(priceRange, 500);
   const location = useLocation();
   const navigate = useNavigate();
 
   const [selectedCategory, setSelectedCategory] = useState(
     new URLSearchParams(location.search).get("type") || ""
+  );
+  const [selectedBrand, setSelectedBrand] = useState(
+    new URLSearchParams(location.search).get("brand") || ""
   );
   const [sortOrder, setSortOrder] = useState(
     new URLSearchParams(location.search).get("sort") || ""
@@ -34,6 +39,19 @@ const ProductList = () => {
     "gaming",
     "laptop",
     "appliances",
+  ];
+
+  const brands = [
+    "apple",
+    "samsung",
+    "sony",
+    "LG",
+    "xiaomi",
+    "logitech G",
+    "microsoft",
+    "Havells",
+    "boat",
+    "JBL",
   ];
 
   const sortOptions = [
@@ -52,8 +70,11 @@ const ProductList = () => {
         page: currentPage,
         limit,
         type: selectedCategory || "",
+        brand: selectedBrand || "",
         search: debouncedSearchQuery,
         sort: sortOrder,
+        minPrice: debouncedPriceRange[0],
+        maxPrice: debouncedPriceRange[1],
       })
     )
       .unwrap()
@@ -62,15 +83,17 @@ const ProductList = () => {
         setTotalPages(Math.ceil(data.totalProducts / limit));
       })
       .catch((error) => {
-        toast.error(error); // Error toast
+        toast.error(error);
       });
   }, [
     dispatch,
     currentPage,
     limit,
     selectedCategory,
+    selectedBrand,
     debouncedSearchQuery,
     sortOrder,
+    debouncedPriceRange,
   ]);
 
   const handleCategorySelect = (category) => {
@@ -79,6 +102,15 @@ const ProductList = () => {
     queryParams.set("page", 1);
     const encodedUrl = queryParams.toString();
     setSelectedCategory(category);
+    navigate({ search: encodedUrl });
+  };
+
+  const handleBrandSelect = (brand) => {
+    const queryParams = new URLSearchParams(location.search);
+    queryParams.set("brand", brand);
+    queryParams.set("page", 1);
+    const encodedUrl = queryParams.toString();
+    setSelectedBrand(brand);
     navigate({ search: encodedUrl });
   };
 
@@ -93,6 +125,18 @@ const ProductList = () => {
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
+  };
+
+  const handlePriceChange = (e) => {
+    const { name, value } = e.target;
+    setPriceRange((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleColumnChange = (value) => {
+    setColumns(value);
   };
 
   const pageNumbers = [];
@@ -123,6 +167,19 @@ const ProductList = () => {
             ))}
           </select>
 
+          <select
+            onChange={(e) => handleBrandSelect(e.target.value)}
+            value={selectedBrand}
+            className="px-4 py-2 border rounded-md w-48"
+          >
+            <option value="">All Brands</option>
+            {brands.map((brand) => (
+              <option key={brand} value={brand}>
+                {brand}
+              </option>
+            ))}
+          </select>
+
           <input
             type="text"
             value={searchQuery}
@@ -131,7 +188,6 @@ const ProductList = () => {
             placeholder="Search products..."
           />
 
-          {/* Sorting Selector */}
           <select
             onChange={(e) => handleSortSelect(e.target.value)}
             value={sortOrder}
@@ -144,36 +200,57 @@ const ProductList = () => {
             ))}
           </select>
 
-          <div className="space-x-4 flex">
+          <div className="flex flex-col space-y-2 w-48">
+            <label className="text-lg">Price Range</label>
+            <input
+              type="range"
+              name="0"
+              min={0}
+              max={2000}
+              value={priceRange[0]}
+              onChange={handlePriceChange}
+              className="w-full"
+            />
+            <input
+              type="range"
+              name="1"
+              min={0}
+              max={2000}
+              value={priceRange[1]}
+              onChange={handlePriceChange}
+              className="w-full"
+            />
+            <div className="flex justify-between text-lg">
+              <span>${priceRange[0]}</span>
+              <span>${priceRange[1]}</span>
+            </div>
+          </div>
+
+          {/* Column Control */}
+          <div className="flex space-x-2">
             <button
-              onClick={() => setColumns(2)}
-              className={`px-4 py-2 rounded-md transition-all duration-200 ${
-                columns === 2
-                  ? "bg-gray-400 text-white"
-                  : "text-black hover:bg-gray-200"
-              }`}
-            >
-              <FaThLarge />
-            </button>
-            <button
-              onClick={() => setColumns(3)}
-              className={`px-4 py-2 rounded-md transition-all duration-200 ${
-                columns === 3
-                  ? "bg-gray-400 text-white"
-                  : "text-black hover:bg-gray-200"
+              onClick={() => handleColumnChange(2)}
+              className={`px-4 py-2 border rounded-md ${
+                columns === 2 ? "bg-blue-500 text-white" : "bg-white"
               }`}
             >
               <FaTh />
             </button>
             <button
-              onClick={() => setColumns(4)}
-              className={`px-4 py-2 rounded-md transition-all duration-200 ${
-                columns === 4
-                  ? "bg-gray-400 text-white"
-                  : "text-black hover:bg-gray-200"
+              onClick={() => handleColumnChange(3)}
+              className={`px-4 py-2 border rounded-md ${
+                columns === 3 ? "bg-blue-500 text-white" : "bg-white"
               }`}
             >
               <FaThList />
+            </button>
+            <button
+              onClick={() => handleColumnChange(4)}
+              className={`px-4 py-2 border rounded-md ${
+                columns === 4 ? "bg-blue-500 text-white" : "bg-white"
+              }`}
+            >
+              <FaThLarge />
             </button>
           </div>
         </div>
@@ -220,6 +297,7 @@ const ProductList = () => {
             ))}
         </div>
 
+        {/* Pagination */}
         <div className="flex justify-between items-center mt-8">
           <div className="flex space-x-4">
             <button

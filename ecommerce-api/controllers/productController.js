@@ -20,6 +20,9 @@ exports.getAllProducts = async (req, res) => {
       type = "",
       search = "",
       sort = "asc",
+      minPrice = 0,
+      maxPrice = 10000, // Set a default max price
+      brand = "", // Brand filter added
     } = req.query;
 
     const pageNumber = parseInt(page, 10);
@@ -27,14 +30,24 @@ exports.getAllProducts = async (req, res) => {
 
     let query = {};
 
+    // Filter by category if 'type' exists
     if (type) {
-      query.category = type; // Filter by category if 'type' exists
+      query.category = type;
     }
 
+    // Search by title if 'search' exists
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: "i" } }, // Case-insensitive title search
       ];
+    }
+
+    // Apply price range filter
+    query.price = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
+
+    // Filter by brand if 'brand' exists
+    if (brand) {
+      query.brand = brand; // Apply brand filter
     }
 
     const sortOrder = sort === "desc" ? -1 : 1;
@@ -55,7 +68,24 @@ exports.getAllProducts = async (req, res) => {
         ? `Products fetched for category: ${type}`
         : search
         ? `Products fetched with search term: ${search}`
+        : brand
+        ? `Products fetched for brand: ${brand}`
         : "All products fetched.",
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error fetching products: " + err.message });
+  }
+};
+
+// Get all products without any query parameters
+exports.getAllProductsInfinite = async (req, res) => {
+  try {
+    const products = await Product.find(); // Fetch all products from the database
+    res.status(200).json({
+      products,
+      message: "All products fetched successfully",
     });
   } catch (err) {
     res

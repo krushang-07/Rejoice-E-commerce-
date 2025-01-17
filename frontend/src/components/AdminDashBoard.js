@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createProduct } from "../redux/Slices/productSlice"; // Assuming createProduct is the Redux action
 import axios from "axios";
+import { motion } from "framer-motion"; // Import motion for animations
 
 const AdminDashboard = () => {
   const [productData, setProductData] = useState({
@@ -72,157 +73,159 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Admin Dashboard</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+      <motion.h1
+        className="text-3xl font-extrabold mb-6 text-gray-900"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        Admin Dashboard
+      </motion.h1>
+      <motion.form
+        onSubmit={handleSubmit}
+        className="space-y-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2 }}
+      >
         {/* Product Title */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Title
-          </label>
+        <motion.div whileHover={{ scale: 1.05 }} className="input-field">
+          <label className="text-lg font-medium text-gray-700">Title</label>
           <input
             type="text"
-            placeholder="Title"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Product Title"
+            className="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
             value={productData.title}
             onChange={(e) =>
               setProductData({ ...productData, title: e.target.value })
             }
           />
-        </div>
+        </motion.div>
 
         {/* Product Description */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+        <motion.div whileHover={{ scale: 1.05 }} className="input-field">
+          <label className="text-lg font-medium text-gray-700">
             Description
           </label>
           <textarea
             placeholder="Description"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
             rows="4"
             value={productData.description}
             onChange={(e) =>
               setProductData({ ...productData, description: e.target.value })
             }
           />
-        </div>
+        </motion.div>
 
         {/* Product Price */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Price
-          </label>
+        <motion.div whileHover={{ scale: 1.05 }} className="input-field">
+          <label className="text-lg font-medium text-gray-700">Price</label>
           <input
             type="number"
             placeholder="Price"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
             value={productData.price}
             onChange={(e) =>
               setProductData({ ...productData, price: e.target.value })
             }
           />
-        </div>
+        </motion.div>
 
         {/* Product Category */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Category
-          </label>
+        <motion.div whileHover={{ scale: 1.05 }} className="input-field">
+          <label className="text-lg font-medium text-gray-700">Category</label>
           <input
             type="text"
             placeholder="Category"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
             value={productData.category}
             onChange={(e) =>
               setProductData({ ...productData, category: e.target.value })
             }
           />
-        </div>
+        </motion.div>
 
         {/* Product Brand */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Brand
-          </label>
+        <motion.div whileHover={{ scale: 1.05 }} className="input-field">
+          <label className="text-lg font-medium text-gray-700">Brand</label>
           <input
             type="text"
             placeholder="Brand"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
             value={productData.brand}
             onChange={(e) =>
               setProductData({ ...productData, brand: e.target.value })
             }
           />
-        </div>
+        </motion.div>
 
         {/* Product Model */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Model
-          </label>
+        <motion.div whileHover={{ scale: 1.05 }} className="input-field">
+          <label className="text-lg font-medium text-gray-700">Model</label>
           <input
             type="text"
             placeholder="Model"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
             value={productData.model}
             onChange={(e) =>
               setProductData({ ...productData, model: e.target.value })
             }
           />
-        </div>
+        </motion.div>
 
         {/* Product Color */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Color
-          </label>
+        <motion.div whileHover={{ scale: 1.05 }} className="input-field">
+          <label className="text-lg font-medium text-gray-700">Color</label>
           <input
             type="text"
             placeholder="Color"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
             value={productData.color}
             onChange={(e) =>
               setProductData({ ...productData, color: e.target.value })
             }
           />
-        </div>
+        </motion.div>
 
         {/* Product Discount */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+        <motion.div whileHover={{ scale: 1.05 }} className="input-field">
+          <label className="text-lg font-medium text-gray-700">
             Discount (%)
           </label>
           <input
             type="number"
             placeholder="Discount"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
             value={productData.discount}
             onChange={(e) =>
               setProductData({ ...productData, discount: e.target.value })
             }
           />
-        </div>
+        </motion.div>
 
         {/* Image Upload */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+        <motion.div whileHover={{ scale: 1.05 }} className="input-field">
+          <label className="text-lg font-medium text-gray-700">
             Product Image
           </label>
           <input
             type="file"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
             onChange={(e) => setImageFile(e.target.files[0])}
           />
-        </div>
+        </motion.div>
 
         {/* Submit Button */}
-        <button
+        <motion.button
           type="submit"
-          className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
+          className="w-full py-3 px-4 bg-black text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition duration-300"
+          whileHover={{ scale: 1.05 }}
         >
           Create Product
-        </button>
-      </form>
+        </motion.button>
+      </motion.form>
     </div>
   );
 };

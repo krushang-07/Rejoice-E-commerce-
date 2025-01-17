@@ -16,7 +16,7 @@ const HomePage = () => {
   } = useSelector((state) => state.products);
 
   useEffect(() => {
-    dispatch(fetchProducts({ page: 1, limit: 4 }))
+    dispatch(fetchProducts({ page: 1, limit: 20 }))
       .unwrap()
       .then((response) => {
         console.log("Fetched products:", response.products);
@@ -155,6 +155,9 @@ const HomePage = () => {
         </div>
       </section>
 
+      <div className="mt-16">
+        <Faq />
+      </div>
       {/* New Arrivals Section */}
       <section className="py-12 bg-gray-100">
         <div className="container mx-auto text-center">
@@ -164,7 +167,7 @@ const HomePage = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           >
-            New Arrivals
+            Our Products
           </motion.h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {loading && <Loader />}
@@ -206,9 +209,6 @@ const HomePage = () => {
       </section>
 
       {/* FAQ Section */}
-      <div className="mt-16">
-        <Faq />
-      </div>
     </div>
   );
 };
