@@ -54,7 +54,9 @@ const ContactUs = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <h1 className="text-4xl font-bold text-gray-900">Contact Us</h1>
+        <h1 className="text-4xl font-bold text-gray-900">
+          Contact PickNShop Team
+        </h1>
         <p className="text-gray-600 mt-2">
           Have questions or need support? We're here to help!
         </p>

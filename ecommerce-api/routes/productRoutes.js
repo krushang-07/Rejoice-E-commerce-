@@ -20,7 +20,9 @@ router.get("/", getAllProducts);
 router.get("/:id", getProductById);
 router.get("/products", getAllProductsInfinite);
 router.post("/", upload.single("image"), createProduct);
-router.patch("/:id", adminAuthMiddleware, updateProduct);
-router.delete("/:id", adminAuthMiddleware, deleteProduct);
+router.patch("/:id", updateProduct);
+router.delete("/:id", deleteProduct);
+// router.patch("/:id", adminAuthMiddleware, updateProduct);
+// router.delete("/:id", adminAuthMiddleware, deleteProduct);
 
 module.exports = router;

@@ -50,6 +50,36 @@ export const fetchAllProducts = createAsyncThunk(
   }
 );
 
+// Update product by ID
+export const updateProduct = createAsyncThunk(
+  "products/update",
+  async ({ id, productData }, { rejectWithValue }) => {
+    try {
+      const response = await API.put(`/products/${id}`, productData);
+      return response.data; // Return updated product
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to update product"
+      );
+    }
+  }
+);
+
+// Delete product by ID
+export const deleteProduct = createAsyncThunk(
+  "products/delete",
+  async (id, { rejectWithValue }) => {
+    try {
+      await API.delete(`/products/${id}`);
+      return id; // Return the deleted product ID
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to delete product"
+      );
+    }
+  }
+);
+
 // Async thunk to fetch a single product by ID
 export const fetchProductById = createAsyncThunk(
   "products/fetchById",
@@ -107,6 +137,8 @@ const initialState = {
   error: null, // Error messages
   createStatus: null,
   hasMore: true,
+  updateStatus: null,
+  deleteStatus: null,
 };
 
 // Create a slice for products
@@ -174,6 +206,41 @@ const productSlice = createSlice({
     });
     builder.addCase(createProduct.rejected, (state, action) => {
       state.createStatus = "failed";
+      state.error = action.payload;
+    });
+    // Update product
+    builder.addCase(updateProduct.pending, (state) => {
+      state.updateStatus = "pending";
+    });
+    builder.addCase(updateProduct.fulfilled, (state, action) => {
+      state.updateStatus = "success";
+      const updatedProduct = action.payload;
+      const index = state.products.products.findIndex(
+        (p) => p._id === updatedProduct._id
+      );
+      if (index !== -1) {
+        state.products.products[index] = updatedProduct;
+      }
+    });
+
+    builder.addCase(updateProduct.rejected, (state, action) => {
+      state.updateStatus = "failed";
+      state.error = action.payload;
+    });
+
+    // Delete product
+    builder.addCase(deleteProduct.pending, (state) => {
+      state.deleteStatus = "pending";
+    });
+    builder.addCase(deleteProduct.fulfilled, (state, action) => {
+      state.deleteStatus = "success";
+      state.products.products = state.products.products.filter(
+        (p) => p._id !== action.payload
+      );
+    });
+
+    builder.addCase(deleteProduct.rejected, (state, action) => {
+      state.deleteStatus = "failed";
       state.error = action.payload;
     });
   },

@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 const Navbar = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [role, setRole] = useState(localStorage.getItem("role")); // Initialize with the role from localStorage
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for toggling the mobile menu
 
   // Calculate total cart quantity
   const cartQuantity = cartItems.reduce(
@@ -18,13 +19,11 @@ const Navbar = () => {
     setRole(userRole);
   };
 
-  console.log(cartQuantity);
   const handleLogout = () => {
     localStorage.removeItem("role");
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     setRole(null);
-    // Optionally, redirect or refresh the page
   };
 
   return (
@@ -32,14 +31,14 @@ const Navbar = () => {
       <div className="bg-gradient-to-r from-white to-gray-200 text-black p-4 shadow-lg">
         <div className="container mx-auto flex justify-between items-center">
           {/* Logo and Home Link */}
-          <div className="text-3xl font-extrabold text-black flex">
+          <div className="text-3xl font-extrabold text-black flex items-center">
             <Link to="/">
               <img src="/ecommerce.png" alt="logo" className="w-12 h-12 mx-4" />
             </Link>
           </div>
 
-          {/* Navigation Links */}
-          <div className="flex space-x-8 items-center">
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex space-x-8 items-center">
             <Link
               to="/"
               className="text-lg hover:text-gray-400 transition duration-300"
@@ -64,6 +63,16 @@ const Navbar = () => {
             >
               Contact Us
             </Link>
+          </div>
+
+          {/* Mobile Hamburger Button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-2xl text-black focus:outline-none"
+            >
+              <i className={`fas ${isMenuOpen ? "fa-times" : "fa-bars"}`} />
+            </button>
           </div>
 
           {/* User and Cart Options */}
@@ -114,6 +123,67 @@ const Navbar = () => {
               </Link>
             </div>
           </div>
+        </div>
+
+        {/* Mobile Menu */}
+        <div
+          className={`${
+            isMenuOpen ? "block" : "hidden"
+          } md:hidden flex flex-col space-y-4 py-4 text-center`}
+        >
+          <Link
+            to="/"
+            className="text-lg hover:text-gray-400 transition duration-300"
+            onClick={() => setIsMenuOpen(false)} // Close menu after click
+          >
+            Home
+          </Link>
+          <Link
+            to="/products"
+            className="text-lg hover:text-gray-400 transition duration-300"
+            onClick={() => setIsMenuOpen(false)} // Close menu after click
+          >
+            Collections
+          </Link>
+          <Link
+            to="/about"
+            className="text-lg hover:text-gray-400 transition duration-300"
+            onClick={() => setIsMenuOpen(false)} // Close menu after click
+          >
+            About
+          </Link>
+          <Link
+            to="/contact-us"
+            className="text-lg hover:text-gray-400 transition duration-300"
+            onClick={() => setIsMenuOpen(false)} // Close menu after click
+          >
+            Contact Us
+          </Link>
+          {/* Re-add login/signup/logout links */}
+          {!role ? (
+            <>
+              <Link
+                to="/login"
+                className="text-lg hover:text-gray-400 transition duration-300"
+                onClick={() => handleLogin("customer")} // Simulate login
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="text-lg hover:text-gray-400 transition duration-300"
+              >
+                Signup
+              </Link>
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="text-lg hover:text-gray-400 transition duration-300"
+            >
+              Logout
+            </button>
+          )}
         </div>
       </div>
     </nav>

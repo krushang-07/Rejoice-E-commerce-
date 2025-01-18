@@ -16,7 +16,7 @@ exports.getAllProducts = async (req, res) => {
   try {
     const {
       page = 1,
-      limit = 5,
+      limit = "",
       type = "",
       search = "",
       sort = "asc",

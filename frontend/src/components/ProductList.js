@@ -17,7 +17,7 @@ const ProductList = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 2000]);
   const debouncedPriceRange = useDebounce(priceRange, 500);
   const location = useLocation();
   const navigate = useNavigate();
@@ -55,9 +55,9 @@ const ProductList = () => {
   ];
 
   const sortOptions = [
-    { value: "", label: "Default" },
-    { value: "asc", label: "Price: Low to High" },
-    { value: "desc", label: "Price: High to Low" },
+    { value: "", label: "Price" },
+    { value: "asc", label: "Low to High" },
+    { value: "desc", label: "High to Low" },
   ];
 
   const queryParams = new URLSearchParams(location.search);
