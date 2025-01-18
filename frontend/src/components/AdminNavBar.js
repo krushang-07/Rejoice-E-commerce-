@@ -33,19 +33,19 @@ const AdminNavbar = () => {
               to="/admin"
               className="text-lg hover:text-gray-200 transition duration-300"
             >
-              Admin Dashboard
+              Dashboard
             </Link>
             <Link
               to="/admin/products"
               className="text-lg hover:text-gray-200 transition duration-300"
             >
-              Admin Products
+              Products
             </Link>
             <Link
               to="/admin/orders"
               className="text-lg hover:text-gray-200 transition duration-300"
             >
-              Admin Orders
+              Orders
             </Link>
 
             {!isAdmin ? (

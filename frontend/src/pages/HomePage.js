@@ -16,7 +16,7 @@ const HomePage = () => {
   } = useSelector((state) => state.products);
 
   useEffect(() => {
-    dispatch(fetchProducts({ page: 1, limit: 20 }))
+    dispatch(fetchProducts({ page: 1, limit: 4 }))
       .unwrap()
       .then((response) => {
         console.log("Fetched products:", response.products);

@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer.js";
@@ -27,7 +27,15 @@ const Orders = lazy(() => import("./components/Orders"));
 const Success = lazy(() => import("./components/Success.js"));
 
 function App() {
-  const role = localStorage.getItem("role");
+  const [role, setRole] = useState(localStorage.getItem("role"));
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("role");
+    if (storedRole) {
+      setRole(storedRole);
+    }
+  }, []);
+
   return (
     <Router>
       <Offer />
@@ -64,14 +72,6 @@ function App() {
             }
           />
 
-          <Route
-            path="/"
-            element={
-              <Protected>
-                <HomePage />
-              </Protected>
-            }
-          />
           <Route
             path="/cart"
             element={

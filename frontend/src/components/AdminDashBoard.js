@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { createProduct } from "../redux/Slices/productSlice"; // Assuming createProduct is the Redux action
 import axios from "axios";
 import { motion } from "framer-motion"; // Import motion for animations
+import { toast } from "react-toastify"; // Import toast for notifications
 
 const AdminDashboard = () => {
   const [productData, setProductData] = useState({
@@ -66,16 +67,20 @@ const AdminDashboard = () => {
 
     // Merge image URL with other product data
     const productDataWithImage = { ...productData, image: uploadedImageUrl };
-    console.log(productDataWithImage);
 
     // Dispatch the createProduct action to Redux
-    dispatch(createProduct(productDataWithImage));
+    try {
+      dispatch(createProduct(productDataWithImage));
+      toast.success("Product created successfully!");
+    } catch (error) {
+      toast.error("Error creating product. Please try again.");
+    }
   };
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
       <motion.h1
-        className="text-3xl font-extrabold mb-6 text-gray-900"
+        className="text-3xl font-extrabold flex i justify-center mb-6 text-gray-900"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}

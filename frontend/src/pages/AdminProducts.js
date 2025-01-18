@@ -6,6 +6,8 @@ import {
   deleteProduct,
 } from "../redux/Slices/productSlice";
 import Loader from "../utils/Loader";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AdminProduct = () => {
   const dispatch = useDispatch();
@@ -27,9 +29,32 @@ const AdminProduct = () => {
     image: null,
   });
 
+  const [showBlink, setShowBlink] = useState(false);
+
   useEffect(() => {
     dispatch(fetchAllProducts());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (updateStatus === "success") {
+      toast.success("Product updated successfully!");
+    }
+    if (updateStatus === "failed") {
+      toast.error("Error updating product.");
+    }
+    if (deleteStatus === "success") {
+      toast.success("Product deleted successfully!");
+    }
+    if (deleteStatus === "failed") {
+      toast.error("Error deleting product.");
+    }
+  }, [updateStatus, deleteStatus]);
+
+  useEffect(() => {
+    setShowBlink(true);
+    const timer = setTimeout(() => setShowBlink(false), 500000); // Blinking effect lasts for 2 seconds
+    return () => clearTimeout(timer);
+  }, [productList.length]);
 
   const handleEdit = (product) => {
     setEditProduct(product);
@@ -90,19 +115,17 @@ const AdminProduct = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">Admin Product Management</h1>
-      {updateStatus === "success" && (
-        <p className="text-green-600 mb-4">Product updated successfully!</p>
-      )}
-      {updateStatus === "failed" && (
-        <p className="text-red-600 mb-4">Error updating product.</p>
-      )}
-      {deleteStatus === "success" && (
-        <p className="text-green-600 mb-4">Product deleted successfully!</p>
-      )}
-      {deleteStatus === "failed" && (
-        <p className="text-red-600 mb-4">Error deleting product.</p>
-      )}
+      <h1 className="text-2xl flex justify-center font-bold mb-6">
+        Product Management
+      </h1>
+
+      <div
+        className={`text-xl font-semibold  text-red-400 ${
+          showBlink ? "animate-blink" : ""
+        }`}
+      >
+        Product Count: {productList.length}
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {productList.map((product) => (
@@ -130,13 +153,13 @@ const AdminProduct = () => {
               </p>
               <div className="mt-4 flex justify-between">
                 <button
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                  className="px-4 py-2 bg-black text-white rounded hover:bg-gray-600 transition"
                   onClick={() => handleEdit(product)}
                 >
                   Edit
                 </button>
                 <button
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                  className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-900 transition"
                   onClick={() => handleDelete(product._id)}
                 >
                   Delete

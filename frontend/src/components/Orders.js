@@ -16,7 +16,7 @@ const Orders = () => {
     if (userId) {
       dispatch(fetchUserOrders(userId))
         .then(() => {
-          toast.success("Orders fetched successfully!");
+          // toast.success("Orders fetched successfully!");
         })
         .catch((err) => {
           // Log error for debugging, but do not throw it
