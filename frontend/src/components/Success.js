@@ -12,7 +12,7 @@ const Success = () => {
     if (sessionId) {
       // Fetch session data from the backend
       axios
-        .post("/store-order", {
+        .post("http://localhost:5000/store-order", {
           sessionId,
           userId, // Replace with the logged-in user's ID
         })

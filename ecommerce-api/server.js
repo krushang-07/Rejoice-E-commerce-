@@ -16,6 +16,7 @@ const productRoutes = require("./routes/productRoutes.js");
 const cartRoutes = require("./routes/cartRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
 const orderRoutes = require("./routes/orderRoutes.js");
+const revenueRoutes = require("./routes/revenueRoutes.js");
 const Order = require("./models/orderSchema.js");
 
 app.use(express.urlencoded({ extended: true }));
@@ -35,6 +36,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/revenue", revenueRoutes);
 
 // Route to handle success and store order data
 app.post("/store-order", async (req, res) => {

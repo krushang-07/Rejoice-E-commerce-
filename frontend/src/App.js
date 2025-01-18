@@ -9,6 +9,8 @@ import Offer from "./components/Offer.js";
 import AdminNavbar from "./components/AdminNavBar.js";
 import Protected from "./utils/Protected";
 import ProtectedAdmin from "./utils/AdminProtected.js";
+import AdminOrders from "./components/AdminOrders.js";
+import RevenueChartPage from "./pages/RevenueChartPage.js";
 
 const AdminProduct = lazy(() => import("./pages/AdminProducts.js"));
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -68,6 +70,22 @@ function App() {
             element={
               <ProtectedAdmin>
                 <AdminProduct />
+              </ProtectedAdmin>
+            }
+          />
+          <Route
+            path="/admin/revenue-chart"
+            element={
+              <ProtectedAdmin>
+                <RevenueChartPage />
+              </ProtectedAdmin>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <ProtectedAdmin>
+                <AdminOrders />
               </ProtectedAdmin>
             }
           />

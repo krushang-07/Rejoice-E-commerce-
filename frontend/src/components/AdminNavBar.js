@@ -33,19 +33,25 @@ const AdminNavbar = () => {
               to="/admin"
               className="text-lg hover:text-gray-200 transition duration-300"
             >
-              Dashboard
+              Add Items
             </Link>
             <Link
               to="/admin/products"
               className="text-lg hover:text-gray-200 transition duration-300"
             >
-              Products
+              List Items
             </Link>
             <Link
               to="/admin/orders"
               className="text-lg hover:text-gray-200 transition duration-300"
             >
               Orders
+            </Link>
+            <Link
+              to="/admin/revenue-chart"
+              className="text-lg hover:text-gray-200 transition duration-300"
+            >
+              Revenue
             </Link>
 
             {!isAdmin ? (

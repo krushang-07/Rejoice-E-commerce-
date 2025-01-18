@@ -39,9 +39,7 @@ const AdminProduct = () => {
     if (updateStatus === "success") {
       toast.success("Product updated successfully!");
     }
-    if (updateStatus === "failed") {
-      toast.error("Error updating product.");
-    }
+
     if (deleteStatus === "success") {
       toast.success("Product deleted successfully!");
     }
@@ -63,7 +61,6 @@ const AdminProduct = () => {
       description: product.description,
       price: product.price,
       brand: product.brand,
-      image: null,
     });
   };
 
@@ -74,9 +71,6 @@ const AdminProduct = () => {
       updatedData.append("description", formData.description);
       updatedData.append("price", formData.price);
       updatedData.append("brand", formData.brand);
-      if (formData.image) {
-        updatedData.append("image", formData.image);
-      }
 
       dispatch(
         updateProduct({
@@ -94,18 +88,12 @@ const AdminProduct = () => {
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setFormData({ ...formData, image: file });
-  };
-
   const resetForm = () => {
     setFormData({
       title: "",
       description: "",
       price: "",
       brand: "",
-      image: null,
     });
     setEditProduct(null);
   };
@@ -228,14 +216,7 @@ const AdminProduct = () => {
                 className="w-full px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-200"
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Image:</label>
-              <input
-                type="file"
-                onChange={handleImageChange}
-                className="w-full px-4 py-2 border rounded focus:outline-none"
-              />
-            </div>
+
             <div className="flex justify-end gap-4">
               <button
                 type="submit"

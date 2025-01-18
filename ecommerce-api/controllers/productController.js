@@ -171,16 +171,34 @@ exports.getProductById = async (req, res) => {
 // Update product
 exports.updateProduct = async (req, res) => {
   try {
+    const { title, description, price, brand } = req.body;
+    console.log(req.body);
+
+    // Prepare an object with only the fields you want to update
+    const updatedProductData = {};
+
+    if (title) updatedProductData.title = title;
+    if (description) updatedProductData.description = description;
+    if (price) updatedProductData.price = price;
+    if (brand) updatedProductData.brand = brand;
+
+    // Perform the update on the database
     const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
+      req.params.id, // Get the product by ID
+      updatedProductData, // Only update the fields in updatedProductData
+      { new: true } // Return the updated product
     );
-    if (!updatedProduct)
+
+    if (!updatedProduct) {
       return res.status(404).json({ message: "Product not found" });
-    res.status(200).json(updatedProduct);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    }
+
+    res.status(200).json({ updatedProduct });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Error updating product", error: error.message });
   }
 };
 
