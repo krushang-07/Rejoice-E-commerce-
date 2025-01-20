@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, useRoutes, Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer.js";
 import { ToastContainer } from "react-toastify";
@@ -28,6 +28,64 @@ const Cancel = lazy(() => import("./components/Cancel"));
 const Orders = lazy(() => import("./components/Orders"));
 const Success = lazy(() => import("./components/Success.js"));
 
+const AppRoutes = ({ role }) => {
+  const routes = [
+    { path: "/login", element: <LoginPage /> },
+    { path: "/signup", element: <SignupPage /> },
+
+    {
+      path: "/",
+      element: <ProtectedLayout />,
+      children: [
+        { path: "/", element: <HomePage /> },
+        { path: "/cart", element: <CartPage /> },
+        { path: "/products", element: <ProductPage /> },
+        { path: "/about", element: <AboutPage /> },
+        { path: "/product/:id", element: <ProductItemPage /> },
+        { path: "/checkout", element: <CheckOutPage /> },
+        { path: "/chat-bot", element: <Chatbot /> },
+        { path: "/contact-us", element: <ContactUsPage /> },
+        { path: "/success", element: <Success /> },
+        { path: "/cancel", element: <Cancel /> },
+        { path: "/orders", element: <Orders /> },
+      ],
+    },
+
+    ...(role === "admin"
+      ? [
+          {
+            path: "/admin",
+            element: <ProtectedAdminLayout />,
+            children: [
+              { path: "/", element: <AdminPage /> },
+              { path: "/products", element: <AdminProduct /> },
+              { path: "/revenue-chart", element: <RevenueChartPage /> },
+              { path: "/orders", element: <AdminOrders /> },
+            ],
+          },
+        ]
+      : []),
+  ];
+
+  return useRoutes(routes);
+};
+
+const ProtectedLayout = () => (
+  <Protected>
+    <Suspense fallback={<Loader />}>
+      <Outlet />
+    </Suspense>
+  </Protected>
+);
+
+const ProtectedAdminLayout = () => (
+  <ProtectedAdmin>
+    <Suspense fallback={<Loader />}>
+      <Outlet />
+    </Suspense>
+  </ProtectedAdmin>
+);
+
 function App() {
   const [role, setRole] = useState(localStorage.getItem("role"));
 
@@ -43,135 +101,7 @@ function App() {
       <Offer />
       {role === "admin" ? <AdminNavbar /> : <Navbar />}
       <ToastContainer />
-      <Suspense fallback={<Loader />}>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Protected>
-                <HomePage />
-              </Protected>
-            }
-          />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-
-          {/* Admin Protected Routes */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedAdmin>
-                <AdminPage />
-              </ProtectedAdmin>
-            }
-          />
-          <Route
-            path="/admin/products"
-            element={
-              <ProtectedAdmin>
-                <AdminProduct />
-              </ProtectedAdmin>
-            }
-          />
-          <Route
-            path="/admin/revenue-chart"
-            element={
-              <ProtectedAdmin>
-                <RevenueChartPage />
-              </ProtectedAdmin>
-            }
-          />
-          <Route
-            path="/admin/orders"
-            element={
-              <ProtectedAdmin>
-                <AdminOrders />
-              </ProtectedAdmin>
-            }
-          />
-
-          <Route
-            path="/cart"
-            element={
-              <Protected>
-                <CartPage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/products"
-            element={
-              <Protected>
-                <ProductPage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/about"
-            element={
-              <Protected>
-                <AboutPage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/product/:id"
-            element={
-              <Protected>
-                <ProductItemPage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/checkout"
-            element={
-              <Protected>
-                <CheckOutPage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/chat-bot"
-            element={
-              <Protected>
-                <Chatbot />
-              </Protected>
-            }
-          />
-          <Route
-            path="/contact-us"
-            element={
-              <Protected>
-                <ContactUsPage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/success"
-            element={
-              <Protected>
-                <Success />
-              </Protected>
-            }
-          />
-          <Route
-            path="/cancel"
-            element={
-              <Protected>
-                <Cancel />
-              </Protected>
-            }
-          />
-          <Route
-            path="/orders"
-            element={
-              <Protected>
-                <Orders />
-              </Protected>
-            }
-          />
-        </Routes>
-      </Suspense>
+      <AppRoutes role={role} />
       <Footer />
     </Router>
   );

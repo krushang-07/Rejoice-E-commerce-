@@ -15,7 +15,8 @@ const RevenueChartPage = () => {
   const { lifetimeRevenue, revenueByPeriod, status, error } = useSelector(
     (state) => state.revenue
   );
-
+  console.log(lifetimeRevenue);
+  console.log(revenueByPeriod);
   useEffect(() => {
     dispatch(fetchLifetimeRevenue());
     dispatch(fetchRevenueByPeriod(period));
