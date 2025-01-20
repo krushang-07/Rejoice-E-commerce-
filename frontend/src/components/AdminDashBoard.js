@@ -4,6 +4,7 @@ import { createProduct } from "../redux/Slices/productSlice"; // Assuming create
 import axios from "axios";
 import { motion } from "framer-motion"; // Import motion for animations
 import { toast } from "react-toastify"; // Import toast for notifications
+import { useDropzone } from "react-dropzone"; // Import useDropzone for drag-and-drop
 
 const AdminDashboard = () => {
   const [productData, setProductData] = useState({
@@ -77,10 +78,17 @@ const AdminDashboard = () => {
     }
   };
 
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/*", // Allow only image files
+    onDrop: (acceptedFiles) => {
+      setImageFile(acceptedFiles[0]);
+    },
+  });
+
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
       <motion.h1
-        className="text-3xl font-extrabold flex i justify-center mb-6 text-gray-900"
+        className="text-3xl font-extrabold flex justify-center mb-6 text-gray-900"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
@@ -210,19 +218,23 @@ const AdminDashboard = () => {
           />
         </motion.div>
 
-        {/* Image Upload */}
-        <motion.div whileHover={{ scale: 1.05 }} className="input-field">
+        {/* Image Upload Section */}
+        <motion.div
+          {...getRootProps()}
+          whileHover={{ scale: 1.05 }}
+          className="input-field border-dashed border-2 border-gray-300 p-6 text-center"
+        >
           <label className="text-lg font-medium text-gray-700">
             Product Image
           </label>
-          <input
-            type="file"
-            className="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
-            onChange={(e) => setImageFile(e.target.files[0])}
-          />
+          <input {...getInputProps()} />
+          <p className="text-lg font-medium text-gray-700">
+            {imageFile
+              ? "Image Selected: " + imageFile.name
+              : "Drag & Drop Image or Click to Select"}
+          </p>
         </motion.div>
 
-        {/* Submit Button */}
         <motion.button
           type="submit"
           className="w-full py-3 px-4 bg-black text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition duration-300"

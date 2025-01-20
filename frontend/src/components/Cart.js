@@ -17,6 +17,7 @@ const Cart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { cartItems, loading } = useSelector((state) => state.cart);
+  console.log(cartItems);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -95,9 +96,19 @@ const Cart = () => {
   };
 
   const items = cartItems || [];
-  const totalPrice = items
-    .reduce((total, item) => total + item.productId.price * item.quantity, 0)
-    .toFixed(2);
+  if (items.length === 0) {
+    return <EmptyCart />; // Show an empty cart message
+  }
+  const totalPrice =
+    items.length > 0
+      ? items
+          .reduce(
+            (total, item) =>
+              total + (item?.productId?.price || 0) * (item?.quantity || 0),
+            0
+          )
+          .toFixed(2)
+      : "0.00";
 
   return (
     <div className="flex flex-col min-h-screen">
