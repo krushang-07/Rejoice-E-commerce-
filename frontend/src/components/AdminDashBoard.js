@@ -69,9 +69,19 @@ const AdminDashboard = () => {
     // Merge image URL with other product data
     const productDataWithImage = { ...productData, image: uploadedImageUrl };
 
-    // Dispatch the createProduct action to Redux
     try {
       dispatch(createProduct(productDataWithImage));
+      setProductData({
+        title: "",
+        description: "",
+        price: "",
+        category: "",
+        brand: "",
+        model: "",
+        color: "",
+        discount: 0,
+        image: "",
+      });
       toast.success("Product created successfully!");
     } catch (error) {
       toast.error("Error creating product. Please try again.");
@@ -79,12 +89,11 @@ const AdminDashboard = () => {
   };
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*", // Allow only image files
+    accept: "image/*",
     onDrop: (acceptedFiles) => {
       setImageFile(acceptedFiles[0]);
     },
   });
-
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
       <motion.h1
@@ -218,22 +227,37 @@ const AdminDashboard = () => {
           />
         </motion.div>
 
-        {/* Image Upload Section */}
         <motion.div
           {...getRootProps()}
           whileHover={{ scale: 1.05 }}
-          className="input-field border-dashed border-2 border-gray-300 p-6 text-center"
+          className="border-dashed border-2 border-gray-400 p-6 text-center rounded-lg cursor-pointer"
         >
+          {" "}
           <label className="text-lg font-medium text-gray-700">
             Product Image
           </label>
           <input {...getInputProps()} />
-          <p className="text-lg font-medium text-gray-700">
-            {imageFile
-              ? "Image Selected: " + imageFile.name
-              : "Drag & Drop Image or Click to Select"}
+          <p className="text-lg font-medium text-gray-600">
+            Drag & Drop Images or Click to Select
           </p>
         </motion.div>
+
+        {imageFile && (
+          <div className="mt-4 w-48 relative">
+            <img
+              src={URL.createObjectURL(imageFile)}
+              alt="Preview"
+              className="w-48 h-48 object-cover rounded-lg"
+            />
+            <button
+              type="button"
+              onClick={() => setImageFile(null)}
+              className="absolute top-2 right-2 bg-white bg-transparent text-black hover:bg-white text-sm px-2 py-1 rounded-lg"
+            >
+              X
+            </button>
+          </div>
+        )}
 
         <motion.button
           type="submit"

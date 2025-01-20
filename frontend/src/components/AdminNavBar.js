@@ -30,7 +30,7 @@ const AdminNavbar = () => {
 
           <div className="hidden md:flex space-x-8 items-center">
             <Link
-              to="/admin"
+              to="/"
               className="text-lg hover:text-gray-200 transition duration-300"
             >
               Add Items
