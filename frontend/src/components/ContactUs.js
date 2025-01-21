@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import emailjs from "emailjs-com";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const ContactUs = () => {
   });
 
   const [status, setStatus] = useState("");
+  const { t } = useTranslation();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,10 +57,10 @@ const ContactUs = () => {
         transition={{ duration: 0.8 }}
       >
         <h1 className="text-4xl font-bold text-gray-900">
-          Contact PickNShop Team
+          {t("Contact PickNShop Team")}
         </h1>
         <p className="text-gray-600 mt-2">
-          Have questions or need support? We're here to help!
+          {t("Have questions or need support? We're here to help!")}
         </p>
       </motion.div>
 
@@ -106,7 +108,7 @@ const ContactUs = () => {
             className=" bg-black text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg hover:bg-gray-600  transition duration-300"
             whileHover={{ scale: 1.1 }}
           >
-            Send Message
+            {t("Send Message")}
           </motion.button>
         </div>
       </motion.form>

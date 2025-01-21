@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Navbar = () => {
+  const { t, i18n } = useTranslation();
   const cartItems = useSelector((state) => state.cart.cartItems);
-  const [role, setRole] = useState(localStorage.getItem("role")); // Initialize with the role from localStorage
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for toggling the mobile menu
+  const [role, setRole] = useState(localStorage.getItem("role"));
 
-  // Calculate total cart quantity
   const cartQuantity = cartItems.reduce(
     (total, item) => total + item.quantity,
     0
@@ -26,164 +26,84 @@ const Navbar = () => {
     setRole(null);
   };
 
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
+
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-md">
       <div className="bg-gradient-to-r from-white to-gray-200 text-black p-4 shadow-lg">
         <div className="container mx-auto flex justify-between items-center">
-          {/* Logo and Home Link */}
+          {/* Logo */}
           <div className="text-3xl font-extrabold text-black flex items-center">
             <Link to="/">
               <img src="/ecommerce.png" alt="logo" className="w-12 h-12 mx-4" />
             </Link>
           </div>
 
-          {/* Desktop Navigation Links */}
+          {/* Navigation Links */}
           <div className="hidden md:flex space-x-8 items-center">
-            <Link
-              to="/"
-              className="text-lg hover:text-gray-400 transition duration-300"
-            >
-              Home
+            <Link to="/" className="text-lg hover:text-gray-400">
+              {t("home")}
             </Link>
-            <Link
-              to="/products"
-              className="text-lg hover:text-gray-400 transition duration-300"
-            >
-              Collections
+            <Link to="/products" className="text-lg hover:text-gray-400">
+              {t("collections")}
             </Link>
-            <Link
-              to="/about"
-              className="text-lg hover:text-gray-400 transition duration-300"
-            >
-              About
+            <Link to="/about" className="text-lg hover:text-gray-400">
+              {t("about")}
             </Link>
-            <Link
-              to="/contact-us"
-              className="text-lg hover:text-gray-400 transition duration-300"
-            >
-              Contact Us
+            <Link to="/contact-us" className="text-lg hover:text-gray-400">
+              {t("contact_us")}
             </Link>
           </div>
 
-          {/* Mobile Hamburger Button */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-2xl text-black focus:outline-none"
-            >
-              <i className={`fas ${isMenuOpen ? "fa-times" : "fa-bars"}`} />
-            </button>
-          </div>
-
-          {/* User and Cart Options */}
+          {/* Language Switcher - Dropdown */}
           <div className="flex items-center space-x-4">
-            {/* Login/Signup or Logout */}
+            <select
+              onChange={(e) => changeLanguage(e.target.value)}
+              className="text-lg border border-gray-300 rounded-lg px-3 py-2"
+              defaultValue={i18n.language}
+            >
+              <option value="en">English</option>
+              <option value="hi">हिंदी</option>
+              <option value="gu">ગુજરાતી</option>
+            </select>
+          </div>
+
+          {/* User and Cart */}
+          <div className="flex items-center space-x-4">
             {!role ? (
               <>
                 <Link
                   to="/login"
-                  className="text-lg hover:text-gray-400 transition duration-300"
-                  onClick={() => handleLogin("customer")} // Simulate login
+                  className="text-lg"
+                  onClick={() => handleLogin("customer")}
                 >
-                  Login
+                  {t("login")}
                 </Link>
-                <Link
-                  to="/signup"
-                  className="text-lg hover:text-gray-400 transition duration-300"
-                >
-                  Signup
+                <Link to="/signup" className="text-lg">
+                  {t("signup")}
                 </Link>
               </>
             ) : (
-              <button
-                onClick={handleLogout}
-                className="text-lg hover:text-gray-400 transition duration-300"
-              >
-                Logout
+              <button onClick={handleLogout} className="text-lg">
+                {t("logout")}
               </button>
             )}
-            <Link
-              to="/orders"
-              className="text-lg hover:text-gray-400 transition duration-300"
-            >
-              Orders
+            <Link to="/orders" className="text-lg">
+              {t("orders")}
             </Link>
-            {/* Cart Icon */}
             <div className="relative">
-              <Link
-                to="/cart"
-                className="text-lg hover:text-gray-400 transition duration-300"
-              >
+              <Link to="/cart" className="text-lg">
                 <FaShoppingCart className="w-8 h-8 text-black mx-auto" />
                 {cartQuantity > 0 && (
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full transform translate-x-2 -translate-y-2">
+                  <span className="absolute top-0 right-0 px-2 py-1 text-xs font-bold text-white bg-red-600 rounded-full transform translate-x-2 -translate-y-2">
                     {cartQuantity}
                   </span>
                 )}
               </Link>
             </div>
           </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <div
-          className={`${
-            isMenuOpen ? "block" : "hidden"
-          } md:hidden flex flex-col space-y-4 py-4 text-center`}
-        >
-          <Link
-            to="/"
-            className="text-lg hover:text-gray-400 transition duration-300"
-            onClick={() => setIsMenuOpen(false)} // Close menu after click
-          >
-            Home
-          </Link>
-          <Link
-            to="/products"
-            className="text-lg hover:text-gray-400 transition duration-300"
-            onClick={() => setIsMenuOpen(false)} // Close menu after click
-          >
-            Collections
-          </Link>
-          <Link
-            to="/about"
-            className="text-lg hover:text-gray-400 transition duration-300"
-            onClick={() => setIsMenuOpen(false)} // Close menu after click
-          >
-            About
-          </Link>
-          <Link
-            to="/contact-us"
-            className="text-lg hover:text-gray-400 transition duration-300"
-            onClick={() => setIsMenuOpen(false)} // Close menu after click
-          >
-            Contact Us
-          </Link>
-          {/* Re-add login/signup/logout links */}
-          {!role ? (
-            <>
-              <Link
-                to="/login"
-                className="text-lg hover:text-gray-400 transition duration-300"
-                onClick={() => handleLogin("customer")} // Simulate login
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="text-lg hover:text-gray-400 transition duration-300"
-              >
-                Signup
-              </Link>
-            </>
-          ) : (
-            <button
-              onClick={handleLogout}
-              className="text-lg hover:text-gray-400 transition duration-300"
-            >
-              Logout
-            </button>
-          )}
         </div>
       </div>
     </nav>

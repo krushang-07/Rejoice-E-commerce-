@@ -6,9 +6,11 @@ import { motion } from "framer-motion";
 import { FaShippingFast, FaShoppingCart, FaHeadset } from "react-icons/fa";
 import Faq from "../components/Faq";
 import Loader from "../utils/Loader";
+import { useTranslation } from "react-i18next";
 
 const HomePage = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     loading,
     error,
@@ -55,7 +57,7 @@ const HomePage = () => {
             to="/products"
             className="bg-white hover:bg-black hover:text-white text-black py-3 px-8 rounded-full text-lg transition transform hover:scale-105 duration-300"
           >
-            Shop Now
+            {t("Shop Now")}
           </Link>
         </motion.div>
       </motion.div>

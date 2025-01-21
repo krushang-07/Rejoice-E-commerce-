@@ -8,8 +8,10 @@ import "react-toastify/dist/ReactToastify.css";
 import SkeletonCard from "../utils/SkeletonCard";
 import useDebounce from "../Hooks/useDebounce";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import { useTranslation } from "react-i18next";
 
 const ProductList = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.products);
   const [columns, setColumns] = useState(4);
@@ -55,9 +57,9 @@ const ProductList = () => {
   ];
 
   const sortOptions = [
-    { value: "", label: "Price" },
-    { value: "asc", label: "Low to High" },
-    { value: "desc", label: "High to Low" },
+    { value: "", label: t("price") },
+    { value: "asc", label: t("lowToHigh") },
+    { value: "desc", label: t("highToLow") },
   ];
 
   const queryParams = new URLSearchParams(location.search);
@@ -159,7 +161,7 @@ const ProductList = () => {
             value={selectedCategory}
             className="px-4 py-2 border rounded-md w-48"
           >
-            <option value="">All Categories</option>
+            <option value="">{t("allCategories")}</option>
             {categories.map((category) => (
               <option key={category} value={category}>
                 {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -172,7 +174,7 @@ const ProductList = () => {
             value={selectedBrand}
             className="px-4 py-2 border rounded-md w-48"
           >
-            <option value="">All Brands</option>
+            <option value="">{t("allBrands")}</option>
             {brands.map((brand) => (
               <option key={brand} value={brand}>
                 {brand}
@@ -185,7 +187,7 @@ const ProductList = () => {
             value={searchQuery}
             onChange={handleSearchChange}
             className="px-4 py-2 border rounded-md w-1/3"
-            placeholder="Search products..."
+            placeholder={t("searchProducts")}
           />
 
           <select
@@ -201,7 +203,7 @@ const ProductList = () => {
           </select>
 
           <div className="flex flex-col space-y-2 w-48">
-            <label className="text-lg">Price Range</label>
+            <label className="text-lg">{t("priceRange")}</label>
             <input
               type="range"
               name="0"
@@ -226,7 +228,6 @@ const ProductList = () => {
             </div>
           </div>
 
-          {/* Column Control */}
           <div className="flex space-x-2">
             <button
               onClick={() => handleColumnChange(2)}
@@ -288,7 +289,7 @@ const ProductList = () => {
                     </p>
                     {product.discount > 0 && (
                       <p className="text-sm text-red-600 font-semibold">
-                        {product.discount}% Off
+                        {product.discount}% {t("off")}
                       </p>
                     )}
                   </div>
@@ -329,7 +330,7 @@ const ProductList = () => {
             </button>
           </div>
           <div className="text-sm text-gray-700">
-            Showing {currentPage} of {totalPages} pages
+            {t("Showing")} {currentPage} {t("to")} {totalPages} {t("pages")}
           </div>
         </div>
       </div>

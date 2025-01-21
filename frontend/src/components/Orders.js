@@ -6,8 +6,10 @@ import Loader from "../utils/Loader";
 import { toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
+import { useTranslation } from "react-i18next";
 
 const Orders = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { orders, loading, error } = useSelector((state) => state.orders);
 
@@ -70,7 +72,9 @@ const Orders = () => {
     <div className="bg-gray-100 min-h-screen">
       {/* Header */}
       <header className="flex items-center justify-between bg-white shadow-md px-6 py-4">
-        <h1 className="text-3xl font-semibold text-gray-800">Your Orders</h1>
+        <h1 className="text-3xl font-semibold text-gray-800">
+          {t("Your Orders")}
+        </h1>
       </header>
       <div className="container mx-auto py-8 px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">

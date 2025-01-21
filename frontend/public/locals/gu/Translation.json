@@ -1,0 +1,30 @@
+{
+    "home": "મુખપૃષ્ઠ",
+    "collections": "સંગ્રહો",
+    "about": "વિશે",
+    "contact_us": "સંપર્ક કરો",
+    "login": "લૉગિન",
+    "signup": "સાઇનઅપ",
+    "logout": "લૉગઆઉટ",
+    "orders": "આદેશો",
+    "cart": "કાર્ટ",
+    "allCategories": "બધી શ્રેણીઓ",
+  "allBrands": "બધા બ્રાન્ડ્સ",
+  "searchProducts": "ઉત્પાદનો શોધો...",
+  "priceRange": "ભાવ શ્રેણી",
+  "lowToHigh": "નીચેથી ઊંચે",
+  "highToLow": "ઊંચેથી નીચે",
+  "showingPages": "{{currentPage}} માંથી {{totalPages}} પાનાં બતાવી રહ્યા છે",
+  "price": "ભાવ",
+  "pages": "પાનાં",
+  "Showing": "બતાવી રહ્યા છે",
+  "to": "માંથી",
+  "Your Orders": "તમારા આદેશો",
+  "Contact PickNShop Team": "સંપર્ક કરો PickNShop ટીમ",
+  "Have questions or need support? We're here to help!": "પ્રશ્નો છે કે સહાય જોઈએ? અમે સહાય કરવા માટે અહીં છીએ!",
+  "Send Message": "સંદેશ મોકલો",
+ "Shop Now": "હવે ખરીદો"
+
+
+  }
+  

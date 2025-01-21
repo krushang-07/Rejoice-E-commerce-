@@ -1,0 +1,30 @@
+{
+    "home": "मुख्य पृष्ठ",
+    "collections": "संग्रह",
+    "about": "के बारे में",
+    "contact_us": "संपर्क करें",
+    "login": "लॉगिन",
+    "signup": "साइनअप",
+    "logout": "लॉगआउट",
+    "orders": "आदेश",
+    "cart": "कार्ट",
+    "allCategories": "सभी श्रेणियाँ",
+  "allBrands": "सभी ब्रांड",
+  "searchProducts": "उत्पाद खोजें...",
+  "priceRange": "मूल्य सीमा",
+  "lowToHigh": "कम से उच्च",
+  "highToLow": "उच्च से कम",
+  "showingPages": "{{currentPage}} में से {{totalPages}} पृष्ठ दिखा रहा है",
+  "pages": "पृष्ठ",
+  "Showing": "दिखा रहा है",
+  "price": "मूल्य",
+  "to": "में से",
+ "Your Orders": "आपके आदेश",
+ "Contact PickNShop Team": "संपर्क करें PickNShop टीम",
+ "Have questions or need support? We're here to help!": "क्या सवाल है या समर्थन की आवश्यकता है? हम यहाँ हैं आपकी मदद के लिए!",
+    "Send Message": "संदेश भेजें",
+    "Shop": "दुकान",
+    "Shop Now": "अब खरीदें"
+
+  }
+  

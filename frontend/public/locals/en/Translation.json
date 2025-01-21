@@ -1,0 +1,31 @@
+{
+    "home": "Home",
+    "collections": "Collections",
+    "about": "About",
+    "contact_us": "Contact Us",
+    "login": "Login",
+    "signup": "Signup",
+    "logout": "Logout",
+    "orders": "Orders",
+    "cart": "Cart",
+
+    "allCategories": "All Categories",
+    "allBrands": "All Brands",
+    "searchProducts": "Search products...",
+    "priceRange": "Price Range",
+    "lowToHigh": "Low to High",
+    "highToLow": "High to Low",
+    "showingPages": "Showing {{currentPage}} of {{totalPages}} pages",
+    "Showing": "Showing",
+    "pages": "Page",
+    "price": "Price",
+    "of": "of",
+    "Your Orders": "Your Orders",
+    "Contact PickNShop Team": "Contact PickNShop Team",
+    "Have questions or need support? We're here to help!": "Have questions or need support? We're here to help!",
+    "Send Message": "Send Message",
+    "Shop Now": "Shop Now"
+
+
+  }
+  
