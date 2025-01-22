@@ -6,13 +6,12 @@ const API = axios.create({
   baseURL: "http://localhost:5000/api",
 });
 
-// Async thunk to fetch user orders based on userId
 export const fetchUserOrders = createAsyncThunk(
   "orders/fetchUserOrders",
   async (userId, { rejectWithValue }) => {
     try {
       const response = await API.get(`/orders/${userId}`);
-      return response.data; // Return orders data for the specific user
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Error fetching orders");
     }
@@ -33,6 +32,20 @@ export const fetchAllOrders = createAsyncThunk(
   }
 );
 
+export const updateOrderStatus = createAsyncThunk(
+  "orders/updateOrderStatus",
+  async ({ orderId, orderStatus }, { rejectWithValue }) => {
+    try {
+      const response = await API.put(`/orders/${orderId}`, { orderStatus });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || "Error updating order status"
+      );
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: "orders",
   initialState: {
@@ -43,6 +56,7 @@ const orderSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+
       .addCase(fetchUserOrders.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -55,6 +69,7 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
       .addCase(fetchAllOrders.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -64,6 +79,26 @@ const orderSlice = createSlice({
         state.orders = action.payload;
       })
       .addCase(fetchAllOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(updateOrderStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateOrderStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedOrder = action.payload;
+
+        const index = state.orders.findIndex(
+          (order) => order._id === updatedOrder._id
+        );
+        if (index !== -1) {
+          state.orders[index] = updatedOrder;
+        }
+      })
+      .addCase(updateOrderStatus.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

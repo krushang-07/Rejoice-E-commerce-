@@ -14,6 +14,7 @@ const orderSchema = new mongoose.Schema(
     paymentStatus: { type: String, default: "Success" },
     paymentMethod: { type: String },
     status: { type: String, default: "Pending" },
+    orderStatus: { type: String, default: "Pending" },
   },
   { timestamps: true }
 );

@@ -25,7 +25,7 @@ const ProductItem = () => {
   const handleAddToCart = () => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
-      alert("You need to log in first!");
+      toast.error("Please login to add items to cart.");
       return;
     }
 
@@ -73,7 +73,6 @@ const ProductItem = () => {
         </Link>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Product Image Section */}
         <div className="flex justify-center">
           <div className="w-full max-w-[500px] h-[500px] bg-gray-100 overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <img
